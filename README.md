@@ -5,7 +5,7 @@ tmux, vim and git config that goes with them. Linux only — a Fedora laptop and
 a WSL box, and whatever machine comes next.
 
 ```bash
-git clone <this repo> ~/agentrc
+git clone https://github.com/harryduong1212/agentrc.git ~/agentrc
 cd ~/agentrc
 ./install.sh --dry-run   # see what it would do
 ./install.sh
