@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# Run the Claude Code CLI that ships inside the VS Code extension.
+#
+# The version is resolved at run time, never written down: the extension
+# updates itself, and a hardcoded path would break silently the next morning
+# with "command not found" for a binary that is very much still installed.
+set -euo pipefail
+
+# Both layouts: `.vscode-server` on a remote/WSL host, `.vscode` on a desktop.
+shopt -s nullglob
+candidates=(
+  "$HOME"/.vscode-server/extensions/anthropic.claude-code-*/resources/native-binary/claude
+  "$HOME"/.vscode/extensions/anthropic.claude-code-*/resources/native-binary/claude
+)
+shopt -u nullglob
+
+if [ ${#candidates[@]} -eq 0 ]; then
+  echo "claude: no Claude Code extension found under ~/.vscode-server or ~/.vscode" >&2
+  echo "        install the extension in VS Code, then re-run this." >&2
+  exit 127
+fi
+
+# Highest version wins. -V sorts 2.1.9 below 2.1.267, which a plain sort does not.
+target="$(printf '%s\n' "${candidates[@]}" | sort -V | tail -1)"
+exec "$target" "$@"

@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# Run the Codex CLI that ships inside the ChatGPT VS Code extension.
+# Same reasoning as bin/claude: resolve the version at run time.
+set -euo pipefail
+
+arch="$(uname -m)"
+case "$arch" in
+  x86_64)  slug="linux-x86_64" ;;
+  aarch64) slug="linux-aarch64" ;;
+  *) echo "codex: unsupported architecture $arch" >&2; exit 1 ;;
+esac
+
+shopt -s nullglob
+candidates=(
+  "$HOME"/.vscode-server/extensions/openai.chatgpt-*/bin/"$slug"/codex
+  "$HOME"/.vscode/extensions/openai.chatgpt-*/bin/"$slug"/codex
+)
+shopt -u nullglob
+
+if [ ${#candidates[@]} -eq 0 ]; then
+  echo "codex: no ChatGPT extension found under ~/.vscode-server or ~/.vscode" >&2
+  exit 127
+fi
+
+target="$(printf '%s\n' "${candidates[@]}" | sort -V | tail -1)"
+exec "$target" "$@"

@@ -1,0 +1,39 @@
+# Appended to ~/.gitconfig by install.sh.
+#
+# No [user] block here on purpose: a name and an email are identity, and this
+# repo is public. Set yours once per machine, outside the repo:
+#   git config --global user.name  "..."
+#   git config --global user.email "..."
+
+[init]
+	defaultBranch = main
+
+[pull]
+	ff = only
+
+[push]
+	autoSetupRemote = true
+
+[diff]
+	algorithm = histogram
+	colorMoved = default
+
+[merge]
+	conflictStyle = zdiff3
+
+[rerere]
+	enabled = true
+
+[column]
+	ui = auto
+
+[branch]
+	sort = -committerdate
+
+[alias]
+	s = status --short --branch
+	l = log --oneline --graph --decorate -20
+	last = log -1 --stat
+	unstage = restore --staged
+	# What am I about to push? Run this before every PR.
+	out = log --oneline @{upstream}..HEAD

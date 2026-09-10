@@ -1,0 +1,55 @@
+" A first vimrc. Short on purpose — you should be able to read every line and
+" know what it does. No plugins, so there is nothing that can fail to load.
+"
+" Grow it as you learn. Anything you do not understand yet, delete.
+
+set nocompatible
+syntax on
+filetype plugin indent on
+
+" ------------------------------------------------------------------ the basics
+set number relativenumber   " absolute on the cursor line, relative elsewhere:
+                            " this is what makes 5j and 3k worth typing
+set cursorline
+set scrolloff=5             " keep 5 lines of context above and below
+set mouse=a                 " the escape hatch while you are learning
+set clipboard^=unnamedplus  " y and p use the system clipboard
+
+" ----------------------------------------------------------------- indentation
+set expandtab shiftwidth=2 softtabstop=2 tabstop=2
+set autoindent smartindent
+
+" --------------------------------------------------------------------- finding
+set incsearch hlsearch ignorecase smartcase
+set path+=**                " :find with a partial name searches subdirectories
+set wildmenu wildmode=longest:full,full
+
+" ----------------------------------------------------------------- being safe
+set undofile undodir=~/.vim/undo//
+set backupdir=~/.vim/backup//
+set directory=~/.vim/swap//
+set confirm                 " ask instead of refusing to quit
+set hidden                  " switch away from a modified buffer without saving
+
+" --------------------------------------------------------------- a few keymaps
+let mapleader = " "
+
+" Escape is far away. jk is not a real word.
+inoremap jk <Esc>
+
+" Clear the search highlight, which otherwise stays lit forever.
+nnoremap <leader><space> :nohlsearch<CR>
+
+" Write and quit, without the shift key gymnastics.
+nnoremap <leader>w :w<CR>
+nnoremap <leader>q :q<CR>
+
+" Move between splits with Ctrl + a direction.
+nnoremap <C-h> <C-w>h
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-l> <C-w>l
+
+" Keep the cursor centred when jumping through search results.
+nnoremap n nzzzv
+nnoremap N Nzzzv

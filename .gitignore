@@ -1,0 +1,4 @@
+# never commit a filled-in machine config
+config-based/omniroute
+*.local
+.DS_Store

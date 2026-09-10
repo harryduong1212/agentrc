@@ -1,0 +1,22 @@
+# Copy to ~/.config/based/omniroute and chmod 600.
+#
+# THIS FILE IS THE ONLY PLACE SECRETS AND MACHINE NAMES LIVE.
+# It is deliberately outside the repo so the repo can be public. Never move a
+# real value from here into a tracked file, and never commit a filled-in copy.
+#
+# Format: key = value. Read with sed, never sourced, so it cannot execute.
+# Anything you export in the shell overrides what is written here.
+
+# Where the gateway is, WITHOUT a trailing slash and without /v1.
+#   on the machine running it:   http://localhost:<the port it publishes>
+#   from another machine:        whatever hostname actually reaches it
+# Note a loopback-bound gateway is not reachable off-host at all — you need a
+# tunnel hostname here, not the server's own name and port.
+url =
+
+# The gateway API key. Not an Anthropic key.
+key =
+
+# Which combo each agent asks for. Combos are created in the gateway's web UI.
+combo =
+codex_combo =

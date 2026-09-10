@@ -1,0 +1,23 @@
+# Codex → OmniRoute. Copied to ~/.codex/config.toml by install.sh, which fills
+# in __BASE_URL__ from ~/.config/based/omniroute.
+#
+# Check it after any edit:  codex --strict-config exec "reply with ok"
+# --strict-config fails on a key this build does not recognise, instead of
+# ignoring it and leaving you to wonder why nothing changed.
+
+model = "__MODEL__"
+model_provider = "omniroute"
+
+[model_providers.omniroute]
+name = "OmniRoute"
+
+# Must include the /v1 suffix. The gateway serves the OpenAI-shaped API there.
+base_url = "__BASE_URL__/v1"
+
+# "chat" = /v1/chat/completions. The gateway does not serve /v1/responses, so
+# leaving this at the default gets a 404 that reads like a network problem.
+wire_api = "chat"
+
+# The key is read from the environment at run time, never stored in this file.
+# shell/common.sh exports it from ~/.config/based/omniroute.
+env_key = "OMNIROUTE_API_KEY"
