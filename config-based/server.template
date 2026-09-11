@@ -1,0 +1,11 @@
+# ~/.config/based/server — where the server machine is, on the tailnet.
+# Read with sed (`key = value`, last one wins), never sourced. Deliberately no
+# defaults: the tailnet name and IP are machine identity and stay out of git.
+# Env overrides win: BASED_SERVER_HOST, BASED_SERVER_IP.
+#
+# Shapes:
+#   host = <machine>.<tailnet>.ts.net     MagicDNS name
+#   ip   = 100.x.y.z                      optional, only for --fix-dns
+
+host =
+ip =

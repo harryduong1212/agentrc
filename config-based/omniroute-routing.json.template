@@ -1,0 +1,27 @@
+{
+  "_doc": [
+    "~/.config/based/omniroute-routing.json — declarative routing metadata",
+    "for infrastructure/omniroute/apply-routing.sh. Prefer generating it:",
+    "  ./infrastructure/omniroute/apply-routing.sh --seed",
+    "writes the live gateway state here, and --dry-run then proves a zero",
+    "diff. Keys starting with _ are ignored.",
+    "",
+    "aliases: bare model id -> target. Three target shapes:",
+    "  'my-combo'          a combo by name (validated against the gateway)",
+    "  'combo/my-combo'    same, explicit",
+    "  'provider/model-id' pin to one upstream (passed through unvalidated)",
+    "",
+    "mappings: request-pattern -> combo. Mapping rules BEAT aliases, so keep",
+    "patterns narrow: a pattern must only cover families the combo can serve,",
+    "or every request comes back HTTP 200 carrying the wrong model. The script",
+    "warns when no combo member matches the pattern's family — read those.",
+    "priority is optional, default 100."
+  ],
+  "aliases": {
+    "my-model": "my-combo",
+    "my-model-exact": "provider/upstream-model-id"
+  },
+  "mappings": [
+    { "pattern": "my-model-*", "combo": "my-combo", "priority": 100 }
+  ]
+}

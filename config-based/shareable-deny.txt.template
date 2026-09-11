@@ -1,0 +1,12 @@
+# ~/.config/based/shareable-deny.txt — the per-machine half of the shareable
+# deny list (the tracked half is config/shareable-deny.txt). One token per
+# line, `#` comments. Machine identity goes HERE, not in the tracked file:
+# a tracked deny list publishes the exact strings it exists to protect.
+#
+# Prefix a line with `word:` to match only as a whole word — a short token
+# without it matches inside every longer string and denies half the tree.
+#
+# Examples (shapes only — put your real values, then delete these lines):
+#   my-machine-name
+#   my-tailnet-name
+#   word:myhandle

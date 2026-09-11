@@ -36,6 +36,9 @@ file here, that is the bug.
 | `shell/common.sh` | `~/.based-shell.sh` | Points both agents at the gateway; adds aliases and `omniroute-where` |
 | `bin/claude`, `bin/codex` | `~/.local/bin/` | Makes both agents one word. Finds the real binary inside the VS Code extension at run time, so an extension update cannot break them |
 | `codex/config.toml.template` | `~/.codex/config.toml` | Codex's gateway provider. `install.sh` fills in the URL |
+| `omniroute/apply-routing.sh` | the gateway itself | Reconciles the gateway's aliases and pattern rules against `~/.config/based/omniroute-routing.json`. `--seed` writes that file from your live gateway, `--dry-run` diffs, `--show` dumps |
+| `omniroute/switch-combo.sh` | every surface at once | Moves the combo id in the config file, VS Code's settings and `~/.codex/config.toml` together, so half the stack cannot stay on the old one |
+| `config-based/*.template` | `~/.config/based/` | The shape of each machine-specific file, values left empty — [what each one is](config-based/README.md) |
 | `tmux/tmux.conf` | `~/.tmux.conf` | Mouse on, `Ctrl-a` prefix, no plugins |
 | `vim/vimrc` | `~/.vimrc` | A first vimrc, short enough to read in full |
 | `git/gitconfig.snippet` | appended to `~/.gitconfig` | Defaults and a few aliases. No identity — set that per machine |
