@@ -19,7 +19,7 @@ cp config-based/shareable-deny.txt.template  ~/.config/based/shareable-deny.txt
 | File | Read by | Format |
 |---|---|---|
 | `omniroute` | `shell/common.sh`, `install.sh`, `omniroute/switch-combo.sh` | `key = value`. Holds the gateway URL, its API key and the combo names. **The only file here that holds a secret** — `chmod 600`, never copied back into a repo |
-| `omniroute-routing.json` | `omniroute/apply-routing.sh` | JSON; keys starting `_` are ignored. Prefer `--seed`, which writes your live gateway state, over filling it in by hand |
+| `omniroute-routing.json` | `omniroute/apply-routing.sh` | JSON; keys starting `_` are ignored. Prefer `--seed`, which writes your live gateway state, over filling it in by hand — [`omniroute/routing.example.json`](../omniroute/routing.example.json) is a filled-in one to read first |
 | `server` | a private workspace repo's `scripts/lib/server-host.sh` | `key = value`, last one wins. `BASED_SERVER_HOST` / `BASED_SERVER_IP` in the environment beat the file |
 | `mcp-profile` | a private workspace repo's `scripts/mcp-profile.sh` | **Exactly one word.** The reader is `cat`, so a comment line breaks it — that is why that template has none |
 | `shareable-deny.txt` | a private workspace repo's `scripts/lint_shareable.py` | One token per line, `#` comments, `word:` prefix for a whole-word match. The per-machine half of a deny list whose other half is tracked |
