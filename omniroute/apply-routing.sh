@@ -150,6 +150,11 @@ function comboOf(target) {
 for (const [k, v] of Object.entries(wantAliases)) {
   if (typeof v !== 'string' || !v) { errors.push(`alias "${k}" has a non-string target`); continue; }
   const cn = comboOf(v);
+  // "<combo>[1m]" -> "<combo>" is a client asking the same combo for a longer
+  // context window (Claude Code does this for session titles). The key is a
+  // combo name, not a model id, so the family stem cannot say anything about
+  // it — checking it only ever produces a false warning.
+  if (k.startsWith(cn + '[')) continue;
   if (cn && !leaves(cn).some(l => family(l) === family(k)))
     warns.push(`alias ${k} -> combo ${cn}: no member serves family "${family(k)}" (members: ${[...new Set(leaves(cn))].join(', ') || 'none'})`);
 }
