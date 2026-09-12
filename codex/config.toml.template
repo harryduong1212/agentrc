@@ -14,9 +14,10 @@ name = "OmniRoute"
 # Must include the /v1 suffix. The gateway serves the OpenAI-shaped API there.
 base_url = "__BASE_URL__/v1"
 
-# "chat" = /v1/chat/completions. The gateway does not serve /v1/responses, so
-# leaving this at the default gets a 404 that reads like a network problem.
-wire_api = "chat"
+# Not "chat": codex 0.154 refuses to load a config that says so, and points at
+# github.com/openai/codex/discussions/7782. The gateway answers /v1/responses,
+# so the value codex now insists on is also the one that works.
+wire_api = "responses"
 
 # The key is read from the environment at run time, never stored in this file.
 # shell/common.sh exports it from ~/.config/based/omniroute.
