@@ -48,6 +48,7 @@ scan_extend      = ["J", "K"]
 scan_mark_all    = ["A"]
 hotkeys_prev     = ["["]
 hotkeys_next     = ["]"]
+footer_view      = ["F"]
 
 # What the always-visible bottom panel and `?` say each one does. Wording only
 # — the keys come from [keys] above, so neither surface can advertise a binding
@@ -82,6 +83,7 @@ scan_extend      = "extend the marked set"
 scan_mark_all    = "mark every NEW row"
 hotkeys_prev     = "previous hotkey page"
 hotkeys_next     = "next hotkey page"
+footer_view      = "switch between full and compact footer"
 
 # Compact labels keep the bottom grid readable. The expanded descriptions
 # above remain the wording used by `?`.
@@ -111,6 +113,23 @@ scan_extend = "extend selection"
 scan_mark_all = "mark NEW"
 hotkeys_prev = "previous hotkeys"
 hotkeys_next = "next hotkeys"
+footer_view = "compact footer"
+
+# Extra-short wording for the one-line footer. F and ? come first so switching
+# back and opening the full reference remain visible in a narrow terminal.
+[compact]
+footer_view = "full"
+help = "keys"
+quit = "quit"
+next_pane = "pane"
+view_keys = "keys"
+view_scan = "scan"
+search = "search"
+favorite = "favourite"
+refresh = "refresh"
+confirm = "write"
+scan_select_mode = "select"
+scan_mark_all = "mark NEW"
 
 # The actions shown in the one always-visible bottom panel. Every action is
 # placed exactly once in each mode. The grid adds columns when the terminal gets
@@ -120,14 +139,19 @@ view = [
   "down", "up", "page_down", "page_up", "home", "end", "search", "favorite",
   "next_pane", "prev_pane", "focus_list", "confirm", "back", "view_keys",
   "view_help", "view_scan", "refresh", "refresh_all", "help", "quit",
-  "scan_select_mode", "scan_extend", "scan_mark_all", "hotkeys_prev", "hotkeys_next",
+  "scan_select_mode", "scan_extend", "scan_mark_all", "hotkeys_prev", "hotkeys_next", "footer_view",
 ]
 scan = [
   "down", "up", "page_down", "page_up", "home", "end", "search",
   "scan_select_mode", "confirm", "scan_extend", "scan_mark_all", "back",
   "view_keys", "view_help", "view_scan", "next_pane", "prev_pane", "focus_list",
-  "favorite", "refresh", "refresh_all", "help", "quit", "hotkeys_prev", "hotkeys_next",
+  "favorite", "refresh", "refresh_all", "help", "quit", "hotkeys_prev", "hotkeys_next", "footer_view",
 ]
+
+# The earlier one-line footer, used when F switches away from the full grid.
+[compact_footer]
+view = ["footer_view", "help", "quit", "next_pane", "view_keys", "view_scan", "search", "favorite", "refresh"]
+scan = ["footer_view", "help", "confirm", "scan_select_mode", "scan_mark_all", "refresh", "view_keys"]
 
 # How `?` groups them, and in what order. Every action in [keys] must appear
 # here exactly once — howto reports it as a config error otherwise, rather than
@@ -136,5 +160,5 @@ scan = [
 panes    = ["next_pane", "prev_pane", "focus_list", "confirm", "back"]
 views    = ["view_keys", "view_help", "view_scan"]
 moving   = ["down", "up", "page_down", "page_up", "home", "end"]
-doing    = ["search", "favorite", "refresh", "refresh_all", "help", "quit", "hotkeys_prev", "hotkeys_next"]
+doing    = ["search", "favorite", "refresh", "refresh_all", "help", "quit", "hotkeys_prev", "hotkeys_next", "footer_view"]
 "scan tab" = ["scan_select_mode", "scan_extend", "scan_mark_all"]

@@ -157,7 +157,8 @@ never overwrites one already there. Tables merge over the shipped files;
 scalars and lists replace them.
 
 - `hotkeys.toml` binds every action and drives dispatch, the `?` overlay, and
-  the always-visible, responsive Hotkeys panel from one table.
+  both the responsive Hotkeys panel and the compact footer from one table. `F`
+  switches between the two footer views.
 - `tools.toml` says what SCAN looks for.
 - `theme.toml` maps the display roles and background to terminal colours. The
   shipped values match superfile's Catppuccin Mocha theme.

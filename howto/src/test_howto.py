@@ -37,6 +37,9 @@ class KeymapTests(unittest.TestCase):
             self.assertEqual(len(shown), len(set(shown)))
             for action in shown:
                 self.assertIn(action, dispatch.values())
+        compact = dict(km.compact_footer_rows())
+        self.assertEqual(compact["view"][0], ("F", "full"))
+        self.assertEqual(compact["view"][1], ("?", "keys"))
 
     def test_build_reports_drift(self):
         km = keymap.build({

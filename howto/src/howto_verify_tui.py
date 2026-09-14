@@ -85,6 +85,33 @@ def run(scr):
         raise AssertionError("status did not render inside Hotkeys")
     instance.status = ""
 
+    # F switches to the earlier one-line footer and back without leaving stale
+    # geometry behind. F and ? remain visible at the minimum supported width.
+    instance.key(ord("F"), scr)
+    instance.draw(scr)
+    compact = "\n".join(
+        scr.instr(y, 0).decode("utf-8", "replace")
+        for y in range(scr.getmaxyx()[0])
+    )
+    if "F full" not in compact or "? keys" not in compact or "Hotkeys" in compact:
+        raise AssertionError("compact footer did not render")
+    curses.resizeterm(18, 50)
+    instance.draw(scr)
+    compact = "\n".join(
+        scr.instr(y, 0).decode("utf-8", "replace")
+        for y in range(scr.getmaxyx()[0])
+    )
+    if "F full" not in compact or "? keys" not in compact:
+        raise AssertionError("compact footer lost its controls after resize")
+    instance.key(ord("F"), scr)
+    instance.draw(scr)
+    if "Hotkeys" not in "\n".join(
+        scr.instr(y, 0).decode("utf-8", "replace")
+        for y in range(scr.getmaxyx()[0])
+    ):
+        raise AssertionError("F did not restore the full footer")
+    curses.resizeterm(*original)
+
     # An empty ALL FLAGS group must render rows from the live --help probe.
     instance.view = "help"
     instance.left.cursor = by_name["rg"]
@@ -131,7 +158,7 @@ def run(scr):
 
     OUT.write_text(
         f"screens {screens}\ntools {len(instance.cat)}\n"
-        "hotkey-grid ok\nresize ok\nlive-help ok\nsearch ok\noverlay ok\n"
+        "hotkey-grid ok\ncompact-footer ok\nresize ok\nlive-help ok\nsearch ok\noverlay ok\n"
         f"errors {len(instance.errors)}\n"
     )
 

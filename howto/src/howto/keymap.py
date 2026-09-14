@@ -99,7 +99,9 @@ class Entry(NamedTuple):
 class Keymap(NamedTuple):
     entries: tuple  # in overlay order — sections, then actions within them
     footer: tuple  # (mode, (action, ...)) pairs
+    compact_footer: tuple  # (mode, (action, ...)) pairs
     short: tuple  # (action, compact description) pairs
+    compact: tuple  # (action, one-line description) pairs
     errors: tuple
 
     def dispatch(self):
@@ -118,18 +120,24 @@ class Keymap(NamedTuple):
     def actions(self):
         return tuple(e.action for e in self.entries)
 
-    def footer_rows(self):
+    def resolved_rows(self, configured, labels):
         """Bottom rows resolved from the same entries as dispatch and `?`."""
         by_action = {entry.action: entry for entry in self.entries}
-        short = dict(self.short)
+        labels = dict(labels)
         return {
             mode: tuple(
-                (spec(by_action[action].keys), short.get(action, by_action[action].desc))
+                (spec(by_action[action].keys), labels.get(action, by_action[action].desc))
                 for action in actions
                 if action in by_action
             )
-            for mode, actions in self.footer
+            for mode, actions in configured
         }
+
+    def footer_rows(self):
+        return self.resolved_rows(self.footer, self.short)
+
+    def compact_footer_rows(self):
+        return self.resolved_rows(self.compact_footer, self.compact)
 
     def action_spec(self, action):
         entry = next((entry for entry in self.entries if entry.action == action), None)
@@ -141,8 +149,10 @@ def build(data):
     keys = settings.section(data, "keys")
     desc = settings.section(data, "desc")
     short = settings.section(data, "short")
+    compact_spec = settings.section(data, "compact")
     overlay = settings.section(data, "overlay")
     footer_spec = settings.section(data, "footer")
+    compact_footer_spec = settings.section(data, "compact_footer")
 
     errors, entries, placed, claimed = [], [], set(), {}
     allowed = set(names(_Symbols()))
@@ -205,13 +215,33 @@ def build(data):
         if missing:
             errors.append(f"hotkeys: [footer] {mode} omits {', '.join(missing)}")
         footer[mode] = tuple(actions)
+    compact_footer = {}
+    for mode, listed in compact_footer_spec.items():
+        actions = []
+        for action in settings.as_keys(listed):
+            if not settings.as_keys(keys.get(action)):
+                errors.append(f"hotkeys: [compact_footer] {mode} lists '{action}', which has no keys")
+                continue
+            actions.append(action)
+        compact_footer[mode] = tuple(actions)
     for action, value in short.items():
         if action not in keys:
             errors.append(f"hotkeys: [short] lists unknown action '{action}'")
         elif not isinstance(value, str):
             errors.append(f"hotkeys: [short] '{action}' must be text")
     compact = tuple((action, value) for action, value in short.items() if isinstance(value, str))
-    return Keymap(tuple(entries), tuple(footer.items()), compact, tuple(errors))
+    for action, value in compact_spec.items():
+        if action not in keys:
+            errors.append(f"hotkeys: [compact] lists unknown action '{action}'")
+        elif not isinstance(value, str):
+            errors.append(f"hotkeys: [compact] '{action}' must be text")
+    compact_labels = tuple(
+        (action, value) for action, value in compact_spec.items() if isinstance(value, str)
+    )
+    return Keymap(
+        tuple(entries), tuple(footer.items()), tuple(compact_footer.items()), compact,
+        compact_labels, tuple(errors)
+    )
 
 
 def load():

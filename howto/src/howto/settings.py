@@ -31,7 +31,7 @@ TEMPLATES = PKG / "templates"
 
 NAMES = ("hotkeys", "tools", "theme", "config")
 TOP_LEVEL = {
-    "hotkeys": ("keys", "desc", "short", "footer", "overlay"),
+    "hotkeys": ("keys", "desc", "short", "compact", "footer", "compact_footer", "overlay"),
     "tools": ("tools",),
     "theme": ("colors",),
     "config": ("layout", "probe", "scan"),

@@ -19,6 +19,7 @@ class App:
         self.overlay_at = 0
         self.hotkey_at = 0
         self.hotkey_page = 1
+        self.full_footer = True
         self.status = ""
         self.docs = {}
         self.open = set()
@@ -334,7 +335,7 @@ class App:
             scr.refresh()
             return
         left_width = self.lay.sidebar_width(width)
-        hotkey_height = self.lay.hotkey_height(height)
+        hotkey_height = self.lay.hotkey_height(height) if self.full_footer else 1
         hotkey_top = height - hotkey_height
         pane_height = hotkey_top
         self.left.width, self.left.height = left_width, pane_height
@@ -349,7 +350,10 @@ class App:
             self.draw_content(scr, height, width, left_width)
         for y in range(2, hotkey_top):
             ui.put(scr, y, left_width, "│", curses.color_pair(theme.BORDER))
-        self.draw_hotkeys(scr, height, width)
+        if self.full_footer:
+            self.draw_hotkeys(scr, height, width)
+        else:
+            self.draw_compact_footer(scr, height, width)
         if self.overlay:
             self.draw_overlay(scr, height, width)
         scr.refresh()
@@ -561,6 +565,11 @@ class App:
             desc_x = x + key_width + 1
             ui.put(scr, row_top + row_no, desc_x, desc[: max(0, available - key_width - 1)])
 
+    def draw_compact_footer(self, scr, height, width):
+        rows = self.km.compact_footer_rows().get(self.mode, ())
+        bar = " " + "   ".join(f"{key} {label}" for key, label in rows) + " "
+        ui.put(scr, height - 1, 0, bar.ljust(width - 1)[: width - 1], curses.color_pair(theme.BAR))
+
     def overlay_rows(self):
         rows, last = [], None
         for section, spec, desc, _ in self.km.rows():
@@ -729,6 +738,9 @@ class App:
             self.hotkey_at += self.hotkey_page
         elif action == "hotkeys_prev":
             self.hotkey_at = max(0, self.hotkey_at - self.hotkey_page)
+        elif action == "footer_view":
+            self.full_footer = not self.full_footer
+            self.hotkey_at = 0
         elif action == "scan_select_mode" and self.mode == "scan":
             self.select_mode = not self.select_mode
             self.status = f"select mode {'on' if self.select_mode else 'off'}"
