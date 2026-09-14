@@ -1,0 +1,96 @@
+# Vim's own keys cannot be probed — `d`, `w`, `:wq` are the language, not
+# bindings, and `vim -es -c map` does not list them. So they are literal here,
+# and only the last group, which IS this repo's vimrc, reads from the live file.
+name:    vim
+what:    the editor that is on every machine. Enough to edit a config and leave
+check:   vim
+docs:    :help, and vimtutor for a 30-minute guided start
+
+= LEAVING — read this first
+Esc              | back to normal mode, where keys are commands not text
+jk               | the same thing, without reaching for Esc. From this vimrc
+:w               | write the file
+:q               | quit
+:wq              | write and quit
+:q!              | quit and throw away every change
+ZZ               | write and quit, no colon
+
+= THE TWO MODES
+i                | insert, before the cursor
+a                | insert, after the cursor
+I                | insert at the start of the line
+A                | insert at the end of the line
+o                | open a new line below and insert
+O                | open a new line above and insert
+v                | visual mode — select by moving
+V                | visual mode, whole lines
+Ctrl-v           | visual mode, a rectangular block
+
+= MOVING
+Arrow keys       | work fine. So does the mouse, in this vimrc
+w / b            | forward / back one word
+0 / $            | start / end of the line
+gg / G           | top / bottom of the file
+:42              | go to line 42
+Ctrl-d / Ctrl-u  | half a screen down / up
+{ / }            | previous / next blank line
+%                | jump to the matching bracket
+5j               | five lines down. The relative numbers exist for this
+
+= EDITING
+x                | delete the character under the cursor
+dd               | delete the line
+dw               | delete to the end of the word
+d$               | delete to the end of the line
+cw               | change the word — delete it and start inserting
+cc               | change the whole line
+yy               | copy ("yank") the line
+p / P            | paste after / before the cursor
+u                | undo
+Ctrl-r           | redo
+.                | repeat the last change
+>> / <<          | indent / outdent the line
+J                | join this line with the next
+
+= FINDING AND REPLACING
+/text            | search forwards
+?text            | search backwards
+*                | search for the word under the cursor
+:%s/old/new/g    | replace everywhere in the file
+:%s/old/new/gc   | the same, confirming each one
+:noh             | clear the highlight, the long way
+
+= FILES AND SPLITS
+:e path          | open another file
+:find name       | open by partial name — this vimrc searches subdirectories
+:sp path         | split horizontally
+:vs path         | split vertically
+:ls              | list open buffers
+:b name          | switch to a buffer by partial name
+:bd              | close the buffer
+
+= THE CLIPBOARD
+y                | with this vimrc, yanks to the system clipboard
+p                | pastes from it
+"+y              | explicitly the system clipboard, in a stock vim
+
+= WHEN IT WILL NOT LET YOU GO
+:q!              | quit, discarding changes
+:wq!             | write even if the file is read-only
+:w !sudo tee %   | write a root-owned file you opened without sudo
+Ctrl-c           | if a command is hanging
+
+= FROM THIS VIMRC
+# Read back from the running vim, not from vim/vimrc — so if you change a
+# mapping, or drop this repo's vimrc entirely, these rows follow.
+probe:   vim-map
+conf:    ~/.vimrc
+@:w<CR>              | write, without the colon
+@:q<CR>              | quit, without the colon
+@:nohlsearch<CR>     | clear the search highlight after you have found it
+@<C-W>h              | move to the split on the left
+@<C-W>j              | the split below
+@<C-W>k              | the split above
+@<C-W>l              | the split on the right
+@nzzzv               | next match, recentred so you can see around it
+@Nzzzv               | previous match, recentred

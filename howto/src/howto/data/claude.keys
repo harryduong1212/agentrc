@@ -1,0 +1,33 @@
+# The in-session surface: keys you press and commands you type at its prompt.
+# None of it appears in `claude --help`, which is the whole reason KEYS and HELP
+# are separate views — a single --help dump would show this half as empty.
+# /help inside a session is always the authoritative list; this is the short one.
+name:    claude
+what:    Claude Code, from the inside. Routed through the gateway by common.sh
+check:   claude
+docs:    /help inside a session
+
+= WHILE YOU ARE IN IT
+Shift-Tab        | cycle permission mode: ask -> accept edits -> plan
+Esc              | interrupt what it is doing, keep the session
+Esc Esc          | go back and edit an earlier message
+Ctrl-c           | cancel the current input
+Ctrl-d           | leave the session
+Ctrl-l           | clear the screen
+Up               | your previous prompts
+
+= TYPING SOMETHING OTHER THAN A PROMPT
+/                | a command — /clear, /compact, /model, /config, /tasks
+@                | a file or directory, completed as you type
+!                | run a shell command without leaving the session
+#                | remember this — appends to the project's CLAUDE.md
+Ctrl-v           | paste an image from the clipboard
+
+= SESSION HOUSEKEEPING
+/help            | every command and key this build has. Start here
+/clear           | throw away the context and start fresh in place
+/compact         | summarise the conversation to win back room
+/model           | switch model for this session
+/tasks           | background tasks and watches this session owns
+/config          | settings, including the permission mode default
+/doctor          | check the installation

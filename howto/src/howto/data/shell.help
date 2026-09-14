@@ -1,0 +1,52 @@
+# The typed half of the shell: redirection, paths, job control and the history
+# expansions. No check: field — this is the shell itself, always here.
+name:  shell
+what:  the syntax you meet in every other tool's examples
+docs:  man zshexpn, man bash (EXPANSION)
+
+= PLUMBING — reading other people's commands
+\|           | send this command's output into the next one
+>  file      | write output to file, replacing it
+>> file      | append output to file
+2> file      | write errors to file, leaving normal output alone
+2>&1         | fold errors into normal output, so \| catches both
+< file       | feed file in as input
+cmd \| tee f | show output AND save it to f
+$(cmd)       | substitute what cmd printed, right here
+
+= PATHS
+~            | your home directory
+.            | here
+..           | one directory up
+cd -         | back to the directory you were in before
+*            | any run of characters in a filename
+**/          | this directory and every directory under it
+
+= JOBS — the typed half of Ctrl-z
+jobs         | what you have suspended or backgrounded
+fg           | resume the last one in the foreground
+bg           | resume it in the background, prompt stays yours
+kill %1      | kill job 1 from that list
+cmd &        | start it in the background from the outset
+
+= HISTORY YOU CAN TYPE
+history      | print the lot; `history \| grep podman` to hunt
+!!           | the whole previous command. `sudo !!` is the classic
+!$           | the last argument of the previous command
+!abc         | the most recent command starting with abc
+
+= YOUR OWN ALIASES
+# Read out of the running shell, so this group is whatever your rc files
+# actually define — including the ones this repo adds. The description is the
+# expansion, unless the row below gives one.
+probe:   shell-alias
+@cc                  | Claude Code, one word
+@ccc                 | continue the most recent conversation
+@ccr                 | pick an older session from a list
+@cx                  | Codex, one word
+@cxr                 | continue the most recent
+@cxrr                | pick an older session from a list
+
+# A shell FUNCTION, not an alias, so `alias` does not report it and the probe
+# cannot see it. Literal on purpose.
+omniroute-where      | which gateway and which combos, before you debug anything

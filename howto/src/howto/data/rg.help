@@ -1,0 +1,60 @@
+# rg --help lists 149 flags and no subcommands. That is why the curated groups
+# come first and the probed list goes last: the full dump is reachable, but it
+# is not the first thing you read.
+name:    rg
+what:    ripgrep — search file contents fast, respecting .gitignore
+check:   rg
+install: sudo dnf install ripgrep   /   sudo apt install ripgrep
+docs:    rg --help, man rg
+probe:   help
+
+= THE BASICS
+rg text          | search every file under here, skipping .gitignore and .git
+rg text path/    | search one directory
+rg -i text       | ignore case
+rg -w text       | whole words only, so `get` does not match `target`
+rg -F 'a.b'      | literal string, no regex. For searching punctuation
+rg -v text       | lines that do NOT match
+
+= NARROWING BY FILE
+rg -t py text    | only Python files
+rg -T py text    | every file EXCEPT Python
+rg --type-list   | which type names exist
+rg -g '*.json' t | only files matching that glob
+rg -g '!*.lock' t | everything except files matching that glob
+rg text -- path  | when the pattern could be mistaken for a flag
+
+= WHAT IT PRINTS
+rg -l text       | just the filenames, one per line
+rg -c text       | just a count per file
+rg --count-matches text | total matches, not matching lines
+rg -n text       | line numbers (on by default when printing to a terminal)
+rg -A 3 text     | three lines after each match
+rg -B 3 text     | three lines before
+rg -C 3 text     | three lines either side
+rg --no-heading  | one flat line per hit, for piping
+rg -o text       | just the matched part, not the whole line
+
+= SEARCHING WHAT IT NORMALLY SKIPS
+rg -u text       | also search .gitignored files
+rg -uu text      | also hidden files
+rg -uuu text     | also binaries. Rarely what you want
+rg --hidden text | dotfiles, without lifting the other rules
+
+= REPLACING
+rg text -r new   | preview the replacement, writing nothing
+rg -l text \| xargs sed -i 's/text/new/g' | actually do it. Commit first
+
+= REGEX WORTH KNOWING
+rg '^text'       | at the start of a line
+rg 'text$'       | at the end
+rg 'a\|b'        | a or b
+rg '\d+'         | one or more digits
+rg -P '(?<=x)y'  | look-behind, which needs the PCRE2 engine
+rg -e p1 -e p2   | two patterns in one pass
+
+= WITH THE OTHER TOOLS HERE
+rg -l text \| fzf | pick from the files that matched
+rg text \| bat -p -l log | highlighted output, paged
+
+= ALL FLAGS (from --help)

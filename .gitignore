@@ -2,3 +2,9 @@
 config-based/omniroute
 *.local
 .DS_Store
+
+# a .pyc embeds the absolute build path, so it carries $HOME and a username
+__pycache__/
+*.pyc
+build/
+*.egg-info/

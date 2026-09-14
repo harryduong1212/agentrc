@@ -7,6 +7,7 @@
 
 model = "__MODEL__"
 model_provider = "omniroute"
+model_catalog_json = "__MODEL_CATALOG__"
 
 [model_providers.omniroute]
 name = "OmniRoute"

@@ -1,0 +1,145 @@
+# What SCAN knows how to look for. Adding a tool is a line here, not a code
+# change — which is the whole difference between a tool for this machine and a
+# tool for yours.
+#
+# Copy any block into ~/.config/howto/tools.toml to change it, or add your own:
+#
+#     [tools.helix]
+#     check = "hx"
+#     conf  = "helix/config.toml"
+#     probe = "toml-actions"
+#     view  = "keys"
+#
+# To drop one howto ships:
+#
+#     [tools.btop]
+#     enabled = false
+#
+# Fields:
+#   check    binary that must be on PATH, or "" when the tool is not a command
+#            (the shell's own aliases are not a binary you can `which`)
+#   conf     config file. "~/..." is taken as written; anything else is
+#            relative to the config dir, so it works on all three OSes.
+#            "" means the tool answers for itself, via --help. A list means
+#            "whichever of these exists" — one entry per shell, per machine.
+#   probe    which reader: tmux toml-actions git-alias vim-map shell-alias
+#            help yaml-keys kdl
+#   view     keys or help. This is a column, not a rule derived from `probe`:
+#            an alias is a probe like any other, but `git co` and `ll` are
+#            things you TYPE, so they belong in HELP. Deriving "anything that is
+#            not --help is a key" proposed a git.keys full of commands.
+#   enabled  false removes a shipped row.
+
+[tools.tmux]
+check = "tmux"
+conf  = "~/.tmux.conf"
+probe = "tmux"
+view  = "keys"
+
+[tools.spf]
+check = "spf"
+conf  = "superfile/hotkeys.toml"
+probe = "toml-actions"
+view  = "keys"
+
+[tools.vim]
+check = "vim"
+conf  = "~/.vimrc"
+probe = "vim-map"
+view  = "keys"
+
+[tools.lazygit]
+check = "lazygit"
+conf  = "lazygit/config.yml"
+probe = "yaml-keys"
+view  = "keys"
+
+[tools.zellij]
+check = "zellij"
+conf  = "zellij/config.kdl"
+probe = "kdl"
+view  = "keys"
+
+[tools.git]
+check = "git"
+conf  = "~/.gitconfig"
+probe = "git-alias"
+view  = "help"
+
+[tools.shell]
+check = ""
+# One machine here runs bash and the other zsh, so naming one of them would be
+# wrong half the time. First that exists wins.
+conf  = ["~/.zshrc", "~/.bashrc", "~/.config/fish/config.fish", "~/.profile"]
+probe = "shell-alias"
+view  = "help"
+
+[tools.claude]
+check = "claude"
+probe = "help"
+view  = "help"
+
+[tools.codex]
+check = "codex"
+probe = "help"
+view  = "help"
+
+[tools.gh]
+check = "gh"
+probe = "help"
+view  = "help"
+
+[tools.rg]
+check = "rg"
+probe = "help"
+view  = "help"
+
+[tools.fzf]
+check = "fzf"
+probe = "help"
+view  = "help"
+
+[tools.less]
+check = "less"
+probe = "help"
+view  = "help"
+
+[tools.bat]
+check = "bat"
+probe = "help"
+view  = "help"
+
+[tools.uv]
+check = "uv"
+probe = "help"
+view  = "help"
+
+[tools.restic]
+check = "restic"
+probe = "help"
+view  = "help"
+
+[tools.gitleaks]
+check = "gitleaks"
+probe = "help"
+view  = "help"
+
+[tools.jq]
+check = "jq"
+probe = "help"
+view  = "help"
+
+[tools.delta]
+check = "delta"
+probe = "help"
+view  = "help"
+
+[tools.fd]
+check = "fd"
+probe = "help"
+view  = "help"
+
+[tools.btop]
+check = "btop"
+probe = "help"
+view  = "help"

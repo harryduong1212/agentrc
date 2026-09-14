@@ -1,0 +1,18 @@
+name:    fzf
+what:    using the picker in a pipe, which is where it earns its place
+check:   fzf
+install: sudo dnf install fzf   /   sudo apt install fzf
+docs:    fzf --help, man fzf
+probe:   help
+
+= USING IT IN A PIPE
+ls \| fzf        | pick a file, print the name
+cd $(find . -type d \| fzf) | pick a directory and go there
+git branch \| fzf | pick a branch
+rg -l text \| fzf | pick from the files that matched
+fzf --preview 'bat --color=always {}' | show the file as you move through
+fzf -m           | allow picking several with Tab
+fzf -q text      | start with the query already typed
+fzf -1           | if exactly one thing matches, take it without asking
+
+= ALL FLAGS (from --help)

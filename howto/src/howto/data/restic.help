@@ -1,0 +1,49 @@
+# restic needs two things in the environment before any command works:
+# RESTIC_REPOSITORY (where the backup lives) and a password. Without them every
+# row below asks for a password on the terminal and half of them fail in a
+# script. Put them in a file outside any repo and export them from there.
+name:    restic
+what:    encrypted, deduplicating backups. Snapshots, not copies
+check:   restic
+install: sudo dnf install restic   /   sudo apt install restic
+docs:    restic help <command>, restic.readthedocs.io
+probe:   help
+
+= BEFORE ANYTHING WORKS
+export RESTIC_REPOSITORY=... | the backend: a path, sftp:, s3:, rclone:
+export RESTIC_PASSWORD_FILE=... | a file holding the password, mode 600
+restic init      | create the repository. Once, ever
+restic check     | verify the repository is intact. Do this after a bad run
+
+= MAKING A BACKUP
+@restic backup   | snapshot a path — `restic backup ~/work`
+  --exclude PAT  | skip anything matching
+  --exclude-file F | ... with the patterns in a file
+  --tag NAME     | label the snapshot so you can find it later
+  --dry-run      | what it would store, storing nothing
+  --one-file-system | do not cross into another mount
+
+= LOOKING AT WHAT IS THERE
+restic snapshots | every snapshot, newest last
+restic snapshots --tag NAME | only the labelled ones
+restic ls latest | the files in the newest snapshot
+restic find FILE | which snapshots contain that file
+restic diff ID1 ID2 | what changed between two snapshots
+restic stats     | how much is actually stored after deduplication
+
+= GETTING SOMETHING BACK
+@restic restore  | write a snapshot back to disk
+  latest --target DIR | the newest one, into a fresh directory
+  ID --include PATH | only one path out of it
+restic dump latest PATH | print one file to stdout, restoring nothing
+restic mount DIR | browse every snapshot as a filesystem. The nicest way
+
+= KEEPING IT FROM GROWING FOREVER
+@restic forget   | drop snapshots by policy — this only unlinks them
+  --keep-daily 7 --keep-weekly 4 --keep-monthly 12 | a sane policy
+  --prune        | actually reclaim the space, in the same run
+  --dry-run      | which snapshots the policy would remove
+restic prune     | reclaim space from already-forgotten snapshots
+restic unlock    | clear a stale lock left by an interrupted run
+
+= ALL FLAGS (from --help)

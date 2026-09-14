@@ -1,0 +1,39 @@
+# You land in less without asking for it: git log, git diff, man, and anything
+# else long. "How do I get out of this" is the first question it raises.
+# Its keys are compiled in, and `less --help` lists only command-line flags —
+# so there is nothing to probe, and every row here is literal.
+name:    less
+what:    the pager you land in from git log and man. q gets you out
+check:   less
+docs:    h inside it
+
+= GETTING OUT
+q                | quit
+Ctrl-c           | if q is not working, something else has the keyboard
+
+= MOVING
+Down / Up        | one line
+Space or PgDn    | one screen forward
+b or PgUp        | one screen back
+g                | the very top
+G                | the very bottom, which also loads the whole file
+Enter            | one line forward
+d / u            | half a screen down / up
+mouse scroll     | works in most terminals
+
+= SEARCHING
+/text            | search forwards
+?text            | search backwards
+n                | next match
+N                | previous match
+&text            | show ONLY the lines that match. Very useful in a long log
+Esc u            | clear the search highlight
+
+= WHILE WATCHING A FILE GROW
+F                | follow, like tail -f. Ctrl-c to stop following
+R                | re-read the file from disk
+
+= LAYOUT
+-S then Enter    | stop wrapping long lines; use Right/Left to scroll instead
+-N then Enter    | show line numbers
+h                | the built-in help, which lists everything

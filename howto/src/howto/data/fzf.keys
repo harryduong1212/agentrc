@@ -1,0 +1,33 @@
+# The in-picker bindings, which are compiled in and not read from a config.
+# The Ctrl-r / Ctrl-t shell integration only exists once you source fzf's
+# key-bindings file — until then the first group here does nothing.
+name:    fzf
+what:    fuzzy picker. Pipe it a list, get back the one you chose
+check:   fzf
+install: sudo dnf install fzf   /   sudo apt install fzf
+docs:    man fzf
+
+= THE SHELL BINDINGS — the reason to install it
+Ctrl-r           | fuzzy-search your shell history. Replaces the plain Ctrl-r
+Ctrl-t           | pick a file and paste its path into the line you are typing
+Alt-c            | pick a directory and cd there
+cmd **<Tab>      | complete that command's argument through fzf
+
+= INSIDE THE PICKER
+type             | narrow the list as you go; letters need not be adjacent
+Up / Down        | move the selection
+Enter            | choose it
+Esc or Ctrl-c    | cancel, choosing nothing
+Tab              | mark this one and move on, when multi-select is enabled
+Shift-Tab        | unmark
+Ctrl-a           | select everything shown
+Ctrl-/           | move the preview pane, or hide it
+Shift-Up/Down    | scroll the preview
+
+= SEARCH SYNTAX
+abc              | fuzzy: those letters in that order, gaps allowed
+'abc             | exact substring
+^abc             | starts with
+abc$             | ends with
+!abc             | does NOT contain
+a \| b           | a or b

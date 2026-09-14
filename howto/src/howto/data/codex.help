@@ -1,0 +1,48 @@
+# The subcommand list is read from `codex --help` on the build you have — 26 of
+# them at the last look, so the curated groups below come first and the full
+# list goes at the bottom.
+name:    codex
+what:    OpenAI Codex CLI. Routed by ~/.codex/config.toml, key from the env
+check:   codex
+docs:    codex --help; codex doctor when something is off
+probe:   help
+
+= STARTING
+codex            | new session here. Aliased to `cx`
+codex resume --last | continue the most recent. Aliased to `cxr`
+@codex resume    | pick an older session from a list. Aliased to `cxrr`
+codex fork --last | branch off the last session instead of continuing it
+@codex exec      | run once, non-interactively, and print the answer
+codex -C DIR     | run as if you had cd'd to DIR first
+codex --worktree | run in a fresh git worktree, leaving your tree alone
+
+= THE THINGS ONLY CODEX HAS
+@codex apply     | apply the diff it last produced, as a git apply
+@codex review    | a code review, non-interactively
+@codex queue     | queue a message for a session that is already running
+@codex agents    | browse every session on the local daemon
+@codex doctor    | check config, auth and runtime health in one go
+@codex sandbox   | run a command inside codex's own sandbox
+
+= SESSION HOUSEKEEPING
+codex archive ID | put a session away without deleting it
+codex unarchive ID | bring it back
+codex delete ID  | permanently delete a saved session
+@codex mcp       | manage its MCP servers
+@codex plugin    | manage its plugins
+@codex update    | update the binary
+
+= WHICH POOL AM I USING
+codex -m NAME    | one run against a different combo. NAME is a combo name
+codex -p NAME    | use a [profiles.NAME] block from ~/.codex/config.toml
+--strict-config  | fail loudly on a config key this build does not know.
+                 | Use it after every edit to ~/.codex/config.toml
+omniroute-where  | which gateway and which combo, from shell/common.sh
+
+= APPROVALS AND SANDBOXING
+-s, --sandbox    | read-only, workspace-write, or danger-full-access
+-a, --ask-for-approval | untrusted, on-failure, on-request, never
+--approve-for-me | stop asking and approve as it goes
+--dangerously-bypass-approvals-and-sandbox | no guard rails at all
+
+= ALL FLAGS (from --help)

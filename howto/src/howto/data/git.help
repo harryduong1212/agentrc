@@ -1,0 +1,88 @@
+# `git --help` lists 4 flags. `git help -a` lists 178 subcommands. So the
+# subcommands: line below is not a nicety — without it this pane would show
+# four rows and look broken. Opening a subcommand runs its own --help, one at
+# a time; the whole tree would be ~16 s.
+#
+# No aliases are shipped here. Aliases are yours, and a file in a public repo
+# that named mine would be a lie on your machine — see the last group for how
+# to read your own back.
+name:    git
+what:    the commands, not a UI. See lazygit for staging by hunk
+check:   git
+docs:    git help <command>, and git/gitconfig.snippet in this repo
+probe:   help
+subcommands: git help -a
+
+= WHERE AM I
+git status -sb   | short status plus the branch and its remote. The one to use
+git branch       | local branches, current one starred
+git log --oneline -10 | the last ten commits, one line each
+git log --stat -1 | what the last commit actually touched
+git remote -v    | where push and pull go
+git status --porcelain | machine-readable. Empty output means a clean tree
+
+= LOOKING BEFORE LEAPING
+git diff         | what you have changed and NOT staged
+git diff --staged | what you have staged and not committed
+git diff --stat  | the same, as a file-by-file summary
+git show HEAD    | the last commit in full
+git show HEAD --stat | the last commit as a file list
+git diff main... | everything on this branch since it left main
+
+= STAGING AND COMMITTING
+@git add         | stage one path. Prefer `git add FILE` to `git add .`
+  -p             | stage hunk by hunk, answering y/n to each
+git restore --staged FILE | unstage, keeping the change in the file
+@git commit      | commit what is staged, opening your editor
+  -m "msg"       | commit with the message inline
+  --amend        | fold this into the previous commit
+  --amend --no-edit | same, keeping the old message
+
+= BRANCHES
+@git switch      | move between branches
+  -c NAME        | create it and move to it
+  -              | back to the branch you were on before
+git branch -d NAME | delete a merged branch
+git branch -m NEW | rename the branch you are on
+
+= UNDOING — least destructive first
+git restore FILE | throw away unstaged changes to one file
+git restore .    | throw away every unstaged change. No undo
+git revert SHA   | a new commit that undoes an old one. Safe on shared history
+git reset --soft HEAD~1 | undo the last commit, keep the changes staged
+git reset --hard HEAD~1 | undo the last commit and the changes. No undo
+git reflog       | every HEAD you have had. How you recover from the above
+
+= STASH — park something without committing
+@git stash       | park every change and give you a clean tree
+  -u             | include untracked files
+  pop            | bring the top of the stash back and drop it
+  list           | what is parked
+  show -p        | the diff of what is parked
+
+= SHARING
+git fetch        | update your view of the remote, change nothing local
+git pull --ff-only | update, and refuse rather than create a merge commit
+git push         | push the current branch
+git push -u origin NAME | push a new branch and set its upstream
+git push --force-with-lease | force, but refuse if someone else pushed first
+
+= FINDING THINGS
+git log -S "text" | commits that added or removed that string
+git log -- PATH  | commits that touched that path
+git blame FILE   | who last changed each line, and in which commit
+git bisect start | binary-search history for the commit that broke it
+
+= IT PAGES THROUGH less
+git log          | opens in less. q to leave, / to search the log
+git --no-pager log | skip the pager entirely
+git config --global core.pager cat | turn it off everywhere. Usually a mistake
+                 | The keys inside the pager are in the `less` KEYS view
+
+= YOUR OWN ALIASES
+git config --get-regexp '^alias\.' | list them. This is where yours are
+git config --global alias.st "status -sb" | add one
+                 | howto's SCAN tab writes these into a generated git.keys,
+                 | so they show up as rows without anybody typing them twice
+
+= ALL FLAGS (from --help)

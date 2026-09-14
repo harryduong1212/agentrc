@@ -1,0 +1,41 @@
+# This repo's own commands. There is no `agentrc` binary, so no check: and no
+# probe: — these are scripts you run by path, and their --help is the truth.
+#
+# The short aliases (cc, cx, …) are NOT here. They live in the shell view,
+# where a live `alias` probe reads them back — so they cannot go stale.
+name:  agentrc
+what:  this repo's own commands — routing, and the setup script
+docs:  the README, and each script's own --help
+
+= WHERE ARE MY REQUESTS GOING
+omniroute-where  | base URL, both combos, and whether the gateway answers
+                 | Run it first whenever an agent behaves oddly
+howto            | this reference. `howto --list` for the tools it knows
+
+= CHANGING WHICH MODELS YOU GET
+omniroute/switch-combo.sh --to NAME | move the claude combo on every surface
+                 | at once: the config file, VS Code's settings, codex's toml
+  --codex --to NAME | move the codex combo instead
+  --dry-run      | print what would change and touch nothing. Do this first
+  --from OLD     | only needed when the current value cannot be read
+
+= THE GATEWAY'S OWN ROUTING TABLE
+omniroute/apply-routing.sh --show | every combo, alias and pattern rule it has
+  --seed         | write your live gateway state into the config file
+  --dry-run      | diff the config against the gateway, change nothing
+  (no flag)      | apply the diff
+  --prune        | apply, and delete rows the config does not mention
+  --probe ID     | after applying, send one 4-token request and report what
+                 | actually served it. The only real proof of a route
+
+= SETTING UP A MACHINE
+./install.sh --dry-run | what it would link and write
+./install.sh     | do it. Safe to run twice
+~/.config/based/omniroute | the URL, the key and the combo names. Mode 600,
+                 | never in a repo. Everything else is derived from it
+
+= WHY AN ALIAS CAN RETURN THE WRONG MODEL
+--dry-run warnings | "no member serves family X" means an alias points at a
+                 | combo serving a different family. That returns HTTP 200
+                 | with a model you did not ask for, not an error
+--probe ID       | settles it. Read the served model, not the status code

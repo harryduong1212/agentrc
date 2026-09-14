@@ -1,0 +1,56 @@
+# The HELP view for {{TOOL}} — what you type at the shell.
+#
+# Hand this file to an agent with the tool's docs and say "fill this in".
+# Everything below the header is `command | description`, grouped by `= HEADING`.
+#
+# Two rules make a good file:
+#   Describe the config in THIS repo, not the upstream manual.
+#   Write the description as WHY, not what. "see what you are about to push"
+#   beats "show the diff".
+
+name:    {{TOOL}}
+what:    one line — what this tool is for
+docs:    https://
+install: how you would get it on a new machine
+check:   {{TOOL}}
+probe:   help
+
+# The `help` probe runs `{{TOOL}} --help` and reads BOTH halves of it: the flags
+# and the subcommands. A flag-only read reports git as four rows.
+#
+# Two knobs, for the tools that do it differently:
+#   help_cmd:     {{TOOL}} help {}      when --help is not how you ask
+#   subcommands:  no                    when the tool has none, so nothing walks
+# `{}` is where the subcommand goes.
+
+= EVERYDAY
+
+# A literal row. The command is what you type, and no probe touches it.
+{{TOOL}} --version   | check it is really installed
+
+# A probed row. `@` marks it as a node the probe resolves; for `help` that is a
+# subcommand or a flag, and opening it is what fetches its children.
+@{{TOOL}} status     | what state you are actually in
+
+= NESTING
+
+# One --help call costs about 90 ms, so the tree is walked ONE NODE AT A TIME,
+# when you open it — never eagerly. (Measured: git has 178 subcommands, so a
+# full walk would take ~16 s and freeze the pane.)
+#
+# Indent two spaces per level. `enter` or `l` opens a node, `h` closes it.
+# Anything you write by hand stays; opening the node appends what the probe
+# found under it.
+@{{TOOL}} run        | the one you use daily
+  --dry-run          | show what it would do, change nothing
+  --verbose          | when the quiet version lied to you
+
+# Searching does not hide a match behind a closed parent — filtering opens
+# every ancestor of a hit, then drops the headings left with no children.
+
+= ALL FLAGS (from --help)
+
+# Leave this group last and empty. The probe fills it in, and putting it at the
+# bottom is what keeps a tool with 149 flags from being the first thing you see.
+
+# A literal `|` inside a row is `\|` — half the useful rows are pipelines.

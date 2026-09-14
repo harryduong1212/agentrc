@@ -1,0 +1,33 @@
+# On Debian and Ubuntu the binary is called batcat, not bat — so `check: bat`
+# reports it missing there even after you install it. That is the package's
+# doing, not a bug here; alias it if it bothers you.
+name:    bat
+what:    cat with syntax highlighting and line numbers. Pages through less
+check:   bat
+install: sudo dnf install bat   /   sudo apt install bat   (binary: batcat)
+docs:    bat --help
+probe:   help
+
+= READING A FILE
+bat file         | show it highlighted, with line numbers
+bat -p file      | plain: no numbers, no borders. For copying out of
+bat -n file      | numbers only, no other decoration
+bat -r 20:40 f   | just lines 20 to 40
+bat -A file      | show tabs, spaces and line endings. For whitespace bugs
+bat f1 f2        | several files, each with a header
+--paging=never   | print and return, for use in a pipe
+
+= LANGUAGE AND THEME
+bat -l json file | force a language when the extension does not say
+bat --list-languages | what it knows
+bat --list-themes | the themes available
+bat --theme=NAME | pick one for this run
+
+= USING IT WITH OTHER TOOLS
+bat -p file \| rg text | highlighted read, then search
+fzf --preview 'bat --color=always {}' | the preview pane worth having
+export PAGER="bat -p" | make it the default pager
+git config --global core.pager "bat -p" | and git's
+export MANPAGER="sh -c 'col -bx \| bat -l man -p'" | highlighted man pages
+
+= ALL FLAGS (from --help)

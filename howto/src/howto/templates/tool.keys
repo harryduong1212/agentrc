@@ -1,0 +1,64 @@
+# The KEYS view for {{TOOL}} — what you press inside it.
+#
+# Hand this file to an agent with the tool's docs and say "fill this in".
+# Everything below the header is `key | description`, grouped by `= HEADING`.
+#
+# Two rules make a good file:
+#   Describe the config in THIS repo, not the upstream manual.
+#   Write the description as WHY, not what. "jump to the last file" beats
+#   "previous buffer".
+
+name:    {{TOOL}}
+what:    one line — what this tool is for
+docs:    https://
+install: how you would get it on a new machine
+check:   {{TOOL}}
+# `check:` is the binary to look for. Leave it empty for something that is not a
+# command — the shell's own line editing, a set of aliases — so howto never
+# reports it missing.
+
+# `probe:` makes the rows below read their keys from the live config instead of
+# carrying them literally. Drop the line if there is nothing to read.
+#   tmux          tmux -f <conf> list-keys
+#   toml-actions  a [section] of action = ["key", ...]      (superfile)
+#   vim-map       vim -es -c map
+#   git-alias     git config --get-regexp '^alias\.'
+#   shell-alias   $SHELL -ic alias
+#   yaml-keys     lazygit's config.yml
+#   kdl           zellij's config.kdl
+probe:   tmux
+conf:    ~/.tmux.conf
+
+= FIRST GROUP
+
+# A literal row. The key is exactly what you press, and no probe touches it.
+# Use this for anything the tool hard-codes and you cannot rebind.
+Ctrl-c               | stop what is running
+
+# A probed row. `@` means the token is an ACTION, and the key column is filled
+# in from the live config when the pane is drawn. This is what stops one
+# person's rebinds shipping as everyone's defaults: change the binding and the
+# row follows it, with no edit here.
+@new-window          | a new window, in the directory you are in
+
+# An action nobody has bound renders dimmed as `unbound`. That is information —
+# you unbound it — not an error, so leave the row in.
+
+= A SECOND GROUP
+
+# A group may read from a different source than the file does. Put `probe:` on
+# the line after the heading and it applies to that group only.
+probe:   shell-alias
+@gs                  | the alias, not the git command
+
+= NESTING
+
+# Indent two spaces per level to make a row a child of the one above it. The
+# parent opens with `enter` or `l`, closes with `h`. Depth is unlimited, and a
+# row indented more than one level past its parent is reported as an error at
+# load rather than quietly reparented.
+copy mode            | read back what scrolled past
+  Space              | start the selection
+  Enter              | take it and leave
+
+# A literal `|` inside a row is `\|` — half the useful rows are pipelines.

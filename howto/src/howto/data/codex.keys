@@ -1,0 +1,16 @@
+# The in-session surface. Absent from `codex --help`, like Claude's — which is
+# why the two views never merge.
+name:    codex
+what:    OpenAI Codex CLI, from the inside
+check:   codex
+docs:    / inside a session lists its own commands as you type
+
+= WHILE YOU ARE IN IT
+Esc              | interrupt what it is doing
+Ctrl-c           | cancel the current input
+Ctrl-d           | leave the session
+/                | its own commands, listed as you type
+
+= THINGS THAT LOOK LIKE ERRORS AND ARE NOT
+Model metadata for `NAME` not found | a combo name is not a model id codex has
+                                    | metadata for. Cosmetic; it still routes

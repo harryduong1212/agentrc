@@ -1,0 +1,35 @@
+# What you type at the shell. The flag list is read from `claude --help` on the
+# build you actually have, so it moves when the CLI does; the groups below are
+# the handful worth knowing by heart.
+name:    claude
+what:    Claude Code from the shell — starting, resuming, and one-shot runs
+check:   claude
+docs:    claude --help
+probe:   help
+
+= STARTING — and not losing yesterday's work
+claude           | new session here
+claude -c        | continue the most recent conversation. Aliased to `ccc`
+claude --resume  | pick an older session from a list. Aliased to `ccr`
+claude --fork-session | resume, but branch instead of overwriting
+claude -p "..."  | one question, answer printed, no session. Good in pipes
+claude --add-dir DIR | let it read a second directory outside this one
+
+= IN THE BACKGROUND
+claude --bg      | start in the background and hand back the prompt
+@claude attach   | pull a background session into this terminal
+@claude agents   | list background sessions
+
+= WHICH MODEL AM I ACTUALLY GETTING
+omniroute-where  | the base URL and both combos, from shell/common.sh
+claude --model X | override for one session
+--fallback-model | switch automatically if the first one errors
+
+= FLAGS WORTH KNOWING ABOUT
+--dangerously-skip-permissions | no approval prompts. Know why before using it
+--allowed-tools  | permit specific tools without prompting
+--effort         | reasoning effort for this session
+--bare           | skip hooks, LSP and plugins. For diagnosing a slow start
+--debug          | show what it is doing under the hood
+
+= ALL FLAGS (from --help)

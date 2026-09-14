@@ -1,0 +1,31 @@
+# What you type at the shell, before you are inside tmux. `tmux --help` prints
+# one usage line and nothing else, so there is nothing worth probing here —
+# every row is literal, and the keys view is the one that reads the live config.
+name:    tmux
+what:    starting, listing and re-attaching sessions from the shell
+check:   tmux
+install: sudo dnf install tmux   /   sudo apt install tmux
+docs:    man tmux
+
+= STARTING
+tmux             | start a session
+tmux new -s work | start one with a name you will recognise later
+tmux new -A -s work | attach to `work` if it exists, start it if it does not
+
+= GETTING BACK IN
+tmux a           | re-attach to the last session after an ssh drop
+tmux a -t work   | re-attach to a named one
+tmux ls          | list what is running
+tmux kill-session -t work | end one for good
+tmux kill-server | end all of them
+
+= FROM OUTSIDE, INTO A SESSION
+tmux send-keys -t work "make test" Enter | type into a session you are not in
+tmux capture-pane -pt work | print what a pane currently shows
+tmux list-keys   | every binding, without being attached
+tmux show-options -g | every global option, with its current value
+
+= CONFIG
+tmux source-file ~/.tmux.conf | reload after an edit, without restarting
+tmux -f FILE     | run with a different config, for trying one out
+tmux -V          | the version, which decides which options exist

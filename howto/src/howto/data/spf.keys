@@ -1,0 +1,70 @@
+# Every row here is an action, not a key. The keys are read out of your own
+# ~/.config/superfile/hotkeys.toml when the pane is drawn, so a rebind shows up
+# here with no edit — and nobody else's file ships with my bindings in it.
+name:    spf
+what:    superfile — two-pane file browser. Arrow keys and mouse, no vim needed
+check:   spf
+install: bash -c "$(curl -sLo- https://superfile.dev/install.sh)"
+docs:    ? inside it, which reads the same file this does
+probe:   toml-actions
+conf:    ~/.config/superfile/hotkeys.toml
+
+= MOVING AROUND
+@list_down                  | move down the list
+@list_up                    | move up
+@confirm                    | into the directory, or open the file
+@parent_directory           | back up one directory
+@page_down                  | a screen at a time
+@page_up                    | a screen back
+@search_bar                 | search inside this directory
+@open_zoxide                | jump to a directory by name, if zoxide is there
+
+= PANELS — the two-pane part
+@next_file_panel            | next panel
+@previous_file_panel        | previous panel
+@create_new_file_panel      | a new panel
+@split_file_panel           | split the current one
+@close_file_panel           | close this panel
+@focus_on_sidebar           | the sidebar, where the pinned directories are
+@toggle_file_preview_panel  | show or hide the file preview
+@focus_on_metadata          | the metadata pane
+@focus_on_process_bar       | the process bar, when a copy is running
+@toggle_footer              | show or hide the footer
+
+= SELECTING MORE THAN ONE
+@change_panel_mode          | select mode on or off
+@file_panel_select_mode_items_select_down | extend the selection downwards
+@file_panel_select_mode_items_select_up   | extend it upwards
+@file_panel_select_all_items | everything in this directory
+
+= ACTING ON FILES
+@file_panel_item_create     | create a new file or directory
+@file_panel_item_rename     | rename
+@copy_items                 | copy
+@cut_items                  | cut
+@paste_items                | paste
+@delete_items               | delete, to the trash
+@permanently_delete_items   | delete for good, no trash
+@open_file_with_editor      | open the file in $EDITOR
+@open_current_directory_with_editor | open the whole directory in $EDITOR
+@compress_file              | compress into an archive
+@extract_file               | extract one
+
+= PATHS — the reason to use it over cd
+@copy_path                  | the selected file's full path, to the clipboard
+@copy_present_working_directory | this directory's path
+@pinned_directory           | pin this directory, or jump to a pinned one
+@cd_quit                    | quit AND leave your shell in this directory
+@quit                       | quit; the shell stays where it was
+
+= SORTING AND HIDDEN FILES
+@open_sort_options_menu     | the sort menu
+@toggle_reverse_sort        | reverse the order
+@toggle_dot_file            | show or hide dotfiles
+
+= THE REST
+@open_help_menu             | the built-in help, which reads the same file
+@open_command_line          | a command line inside spf
+@open_spf_prompt            | the spf prompt
+@cancel_typing              | abandon what you were typing
+@confirm_typing             | accept it

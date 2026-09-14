@@ -1,0 +1,38 @@
+# No check: field — this is the shell itself, always here.
+# These are the default emacs-mode bindings, identical in bash and zsh, and
+# compiled in rather than configured — so they are literal, not probed.
+name:  shell
+what:  line editing and job control — works in every terminal, before any tool
+docs:  man zshzle, man bash (READLINE)
+
+= MOVING — stop using the left arrow key
+Ctrl-a       | jump to the start of the line
+Ctrl-e       | jump to the end of the line
+Alt-b        | back one word
+Alt-f        | forward one word
+Ctrl-b       | back one character (same as Left)
+Ctrl-f       | forward one character (same as Right)
+
+= DELETING — and getting it back
+Ctrl-w       | delete the word before the cursor. The one to know
+Ctrl-u       | delete everything before the cursor
+Ctrl-k       | delete everything after the cursor
+Alt-d        | delete the word after the cursor
+Ctrl-y       | paste back whatever you just deleted
+Ctrl-_       | undo the last edit (Ctrl-/ on some keyboards)
+
+= HISTORY — you have already typed it once
+Ctrl-r       | search backwards. Type to narrow, Ctrl-r again for older hits
+Ctrl-g       | abandon the search and keep the line you had
+Up / Down    | step through recent commands
+Alt-.        | insert the last argument of the previous command
+
+= WHEN IT IS STILL RUNNING
+Ctrl-c       | stop it
+Ctrl-z       | suspend it and get the prompt back
+Ctrl-d       | end of input. On an empty prompt, it logs you out
+
+= COMPLETION — the tab key is not optional
+Tab          | complete a command, a path, a flag, a branch name
+Tab Tab      | show every candidate when there is more than one
+Ctrl-l       | clear the screen without losing the line you are typing

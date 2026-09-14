@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# The keys and the commands for the tools here. Resolves its own location so the
+# symlink in ~/.local/bin finds the package next to the real script.
+#
+#   howto            the browser — 1 KEYS, 2 HELP, 3 SCAN, ? for the keys
+#   howto --list     the same content as plain text, for grepping
+set -euo pipefail
+self="${BASH_SOURCE[0]}"
+while [ -L "$self" ]; do
+  target="$(readlink "$self")"
+  case "$target" in
+    /*) self="$target" ;;
+    *)  self="$(dirname "$self")/$target" ;;
+  esac
+done
+root="$(cd "$(dirname "$self")/../howto" && pwd)"
+export PYTHONPATH="$root/src${PYTHONPATH:+:$PYTHONPATH}"
+exec python3 -m howto "$@"

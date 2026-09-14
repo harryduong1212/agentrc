@@ -1,0 +1,38 @@
+# Sizes and timeouts. Override in ~/.config/howto/config.toml.
+
+[layout]
+terminal_min_height = 10
+terminal_min_width  = 50
+frame_rows          = 4
+pane_gap            = 3
+overlay_vertical_margin = 2
+content_min_width   = 20
+
+# The tool list on the left: a quarter of the terminal, clamped. On an 80-column
+# terminal that is 20; the clamp is what stops it vanishing on a narrow pane and
+# eating half the screen on a wide one.
+sidebar_ratio = 4
+sidebar_min   = 18
+sidebar_max   = 26
+
+# How much width the right pane gives the key column before a row spills into
+# `+N`. tmux binds select-pane to twelve keys; a row listing all twelve is not a
+# cheatsheet.
+key_col = 22
+
+# The ? overlay.
+overlay_max_width = 62
+overlay_margin = 4
+overlay_frame_rows = 3
+
+[probe]
+# A tool that cannot answer in this many seconds is a tool that cannot answer.
+# `vim -es` hangs forever on a config that opens a prompt, and without this the
+# whole app hangs with it.
+timeout = 5
+
+[scan]
+# How many rows a written stub carries. A stub is something a human finishes, so
+# 200 blank descriptions is not a favour.
+help_actions = 40
+key_actions  = 60

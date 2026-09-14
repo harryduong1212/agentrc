@@ -1,0 +1,53 @@
+# uv replaces pip, venv, pyenv and pipx with one binary. The rows below are the
+# handful you use daily; `uv --help` lists 24 subcommands and each of those has
+# its own — `uv tool install` alone has 63 flags, which is exactly why they are
+# fetched on demand and not written out here.
+name:    uv
+what:    Python packaging — venvs, installs, tools, and Python itself
+check:   uv
+install: curl -LsSf https://astral.sh/uv/install.sh \| sh
+docs:    uv help <command>, docs.astral.sh/uv
+probe:   help
+
+= A PROJECT
+uv init NAME     | new project with a pyproject.toml
+uv add PKG       | add a dependency, resolve, and install it
+uv add --dev PKG | a dev-only dependency
+uv remove PKG    | drop one
+uv sync          | make the venv match the lockfile. The one to run after a pull
+uv lock          | re-resolve and rewrite uv.lock
+uv tree          | the dependency tree, with who pulled what in
+
+= RUNNING THINGS
+@uv run          | run a command inside the project venv, syncing first
+  --no-sync      | skip the sync when you know it is current
+  --with PKG     | add a package for this run only
+uv run script.py | no activate step, ever
+uv run pytest    | the same for any installed tool
+
+= TOOLS — the pipx replacement
+uv tool install NAME | install a CLI into its own isolated venv
+uv tool list     | what you have installed this way
+uv tool upgrade --all | upgrade all of them
+uv tool uninstall NAME | remove one
+uvx NAME         | run a tool WITHOUT installing it. Short for `uv tool run`
+
+= PYTHON ITSELF
+uv python list   | which interpreters uv can see, installed or downloadable
+uv python install 3.12 | fetch one
+uv venv          | make a .venv here
+uv venv --python 3.12 | ... with a specific interpreter
+
+= THE pip COMPATIBILITY LAYER
+uv pip install PKG | same arguments as pip, much faster
+uv pip list      | what is in the active environment
+uv pip freeze    | the same, as requirements lines
+uv pip compile requirements.in -o requirements.txt | the pip-tools replacement
+uv pip sync requirements.txt | make the env match that file exactly
+
+= HOUSEKEEPING
+uv cache dir     | where the cache lives
+uv cache clean   | empty it
+uv self update   | update uv itself
+
+= ALL FLAGS (from --help)

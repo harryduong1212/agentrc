@@ -24,12 +24,14 @@ link() {
     say "SKIPPED  $dst already exists and is not a symlink — move it aside first"
   else
     run ln -sfn "$src" "$dst"
-    say "linked   $dst"
+    if [ "$DRY" != 1 ]; then
+      say "linked   $dst"
+    fi
   fi
 }
 
 head_ "shell"
-mkdir -p "$HOME/.local/bin"
+run mkdir -p "$HOME/.local/bin"
 link "$DOTS/shell/common.sh" "$HOME/.based-shell.sh"
 for rc in "$HOME/.zshrc" "$HOME/.bashrc"; do
   [ -f "$rc" ] || continue
@@ -37,15 +39,58 @@ for rc in "$HOME/.zshrc" "$HOME/.bashrc"; do
     say "ok       $rc already sources it"
   else
     run sh -c "printf '\n# agentrc\n[ -f \"\$HOME/.based-shell.sh\" ] && . \"\$HOME/.based-shell.sh\"\n' >> '$rc'"
-    say "appended $rc"
+    if [ "$DRY" != 1 ]; then
+      say "appended $rc"
+    fi
   fi
 done
 
-head_ "agent wrappers"
+head_ "commands"
 for w in claude codex; do
   run chmod +x "$DOTS/bin/$w"
   link "$DOTS/bin/$w" "$HOME/.local/bin/$w"
 done
+if command -v pipx >/dev/null 2>&1; then
+  if [ "$DRY" = 1 ]; then
+    say "would: install or upgrade $DOTS/howto with pipx"
+  else
+    if pipx list --json 2>/dev/null | grep -q 'agentrc-howto'; then
+      pipx install --force "$DOTS/howto"
+      say "reinstalled howto with pipx"
+    else
+      pipx install "$DOTS/howto"
+      say "installed howto with pipx"
+    fi
+  fi
+  if [ "$DRY" = 1 ]; then
+    say "would: link the pipx howto command into $HOME/.local/bin"
+  else
+    HOWTO_BIN_DIR="$(pipx environment --value PIPX_BIN_DIR 2>/dev/null || true)"
+    HOWTO_CMD="${HOWTO_BIN_DIR:-$HOME/.local/bin}/howto"
+    if [ "$HOWTO_CMD" = "$HOME/.local/bin/howto" ]; then
+      say "ok       $HOME/.local/bin/howto installed by pipx"
+    else
+      link "$HOWTO_CMD" "$HOME/.local/bin/howto"
+    fi
+  fi
+elif python3 -m venv --help >/dev/null 2>&1; then
+  HOWTO_VENV="${XDG_DATA_HOME:-$HOME/.local/share}/agentrc/howto"
+  HOWTO_PYTHON="$HOWTO_VENV/bin/python3"
+  if [ ! -x "$HOWTO_VENV/bin/python3" ]; then
+    run python3 -m venv "$HOWTO_VENV"
+  fi
+  run "$HOWTO_PYTHON" -m pip install --upgrade "$DOTS/howto"
+  if [ "$DRY" = 1 ]; then
+    say "would: install howto in $HOWTO_VENV"
+  else
+    say "installed howto in $HOWTO_VENV"
+  fi
+  link "$HOWTO_VENV/bin/howto" "$HOME/.local/bin/howto"
+else
+  say "using the repo-local howto wrapper — install pipx or Python's venv module for isolation"
+  run chmod +x "$DOTS/bin/howto"
+  link "$DOTS/bin/howto" "$HOME/.local/bin/howto"
+fi
 
 head_ "tmux, vim, git"
 link "$DOTS/tmux/tmux.conf" "$HOME/.tmux.conf"
@@ -55,7 +100,9 @@ if grep -q 'defaultBranch' "$HOME/.gitconfig" 2>/dev/null; then
   say "ok       ~/.gitconfig already carries the snippet"
 else
   run sh -c "cat '$DOTS/git/gitconfig.snippet' >> '$HOME/.gitconfig'"
-  say "appended ~/.gitconfig"
+  if [ "$DRY" != 1 ]; then
+    say "appended ~/.gitconfig"
+  fi
 fi
 
 head_ "machine config (never in the repo)"
@@ -65,7 +112,11 @@ if [ -f "$CONFIG_DIR/omniroute" ]; then
 else
   run cp "$DOTS/config-based/omniroute.template" "$CONFIG_DIR/omniroute"
   run chmod 600 "$CONFIG_DIR/omniroute"
-  say "created  $CONFIG_DIR/omniroute — FILL IT IN, it is empty"
+  if [ "$DRY" = 1 ]; then
+    say "would: create $CONFIG_DIR/omniroute — then fill it in"
+  else
+    say "created  $CONFIG_DIR/omniroute — FILL IT IN, it is empty"
+  fi
 fi
 
 head_ "codex"
@@ -76,10 +127,15 @@ if [ -z "$url" ]; then
 else
   run mkdir -p "$HOME/.codex"
   if [ "$DRY" = 1 ]; then
+    say "would: build ~/.codex/model-catalog.json with the OmniRoute Codex pools"
     say "would: write ~/.codex/config.toml pointing at $url"
   else
+    "$DOTS/codex/build-model-catalog.py" \
+      --codex "$DOTS/bin/codex" --output "$HOME/.codex/model-catalog.json"
     sed -e "s|__BASE_URL__|$url|" -e "s|__MODEL__|${model:-auto/best-coding}|" \
+      -e "s|__MODEL_CATALOG__|$HOME/.codex/model-catalog.json|" \
       "$DOTS/codex/config.toml.template" > "$HOME/.codex/config.toml"
+    say "wrote    ~/.codex/model-catalog.json"
     say "wrote    ~/.codex/config.toml"
   fi
 fi

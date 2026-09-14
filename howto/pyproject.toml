@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agentrc-howto"
+dynamic = ["version"]
+description = "A live two-view terminal cheatsheet"
+readme = "src/howto/data/README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "windows-curses; sys_platform == 'win32'",
+]
+
+[project.scripts]
+howto = "howto.__main__:run"
+
+[tool.setuptools.package-data]
+howto = ["config/*.toml", "data/*", "templates/*"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools]
+include-package-data = false
+py-modules = []
+
+[tool.setuptools.dynamic]
+version = {attr = "howto.__about__.__version__"}

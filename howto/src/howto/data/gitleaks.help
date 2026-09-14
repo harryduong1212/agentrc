@@ -1,0 +1,45 @@
+# The distinction that catches people: `gitleaks git` reads git history, so it
+# finds a key you committed and then deleted. `gitleaks dir` reads the files on
+# disk and knows nothing about history. A clean `dir` run says nothing about
+# what is still in your commits.
+name:    gitleaks
+what:    find secrets in a repo — in the working tree, or anywhere in history
+check:   gitleaks
+install: sudo dnf install gitleaks   /   see github.com/gitleaks/gitleaks
+docs:    gitleaks <command> --help
+probe:   help
+
+= THE TWO SCANS
+@gitleaks git    | scan commit history — what you committed and then removed
+  --no-banner    | no ASCII art, for a script or a hook
+  --log-opts="--all" | every ref, not just the current branch
+gitleaks dir .   | scan the files on disk, history ignored
+gitleaks dir FILE | one file
+
+= BEFORE A REPO GOES PUBLIC
+gitleaks git --redact | show the findings with the secret itself masked
+gitleaks git -v  | verbose: the matching line and where it came from
+gitleaks git --exit-code 1 | non-zero when anything is found. For CI
+
+= A REPORT YOU CAN KEEP
+@gitleaks git    | with a report written out
+  -f json -r out.json | machine-readable
+  -f sarif -r out.sarif | what code-scanning UIs read
+  -f csv -r out.csv | a spreadsheet
+
+= WHEN IT FINDS SOMETHING THAT IS FINE
+gitleaks:allow   | a comment on the line; gitleaks skips it
+.gitleaksignore  | a file of fingerprints to ignore, one per line
+-b baseline.json | treat everything in that report as already-known
+-c .gitleaks.toml | your own rules, replacing the defaults
+
+= FROM A PIPE
+echo "$VALUE" \| gitleaks stdin | check one value without writing it anywhere
+
+= WHEN IT DOES FIND A REAL KEY
+                 | Rotate it first. Removing it from history does not un-leak
+                 | something that has already been pushed or cloned
+git filter-repo --replace-text FILE | rewrite history. Read its docs first:
+                 | a bare `#` line in that file rewrites every `#` you have
+
+= ALL FLAGS (from --help)

@@ -1,0 +1,56 @@
+# Upstream defaults, written literally. lazygit's keys live in config.yml under
+# a nested `keybinding:` tree, and a config that has never been edited does not
+# contain them at all — so there is nothing to read back until you rebind
+# something. The SCAN tab generates a probed file if you do.
+name:    lazygit
+what:    git as a UI. Stage by hunk with arrow keys instead of git add -p
+check:   lazygit
+install: sudo dnf install lazygit   /   see github.com/jesseduffield/lazygit
+docs:    ? inside it lists every key for the panel you are in
+
+= THE IDEA
+Tab              | next panel: Status, Files, Branches, Commits, Stash
+Shift-Tab        | previous panel
+1 2 3 4 5        | jump straight to a panel by number
+?                | every key for the panel you are in. Start here
+q                | quit
+Esc              | back out of a menu or a diff
+mouse            | click a panel, click a file, scroll a diff
+
+= FILES PANEL — where you will spend the time
+Space            | stage or unstage the file under the cursor
+a                | stage or unstage everything
+Enter            | open the file's hunks, to stage part of it
+Space (in hunks) | stage just this hunk
+d                | discard the change. There is a confirmation
+c                | commit what is staged
+A                | amend the last commit with what is staged
+e                | open the file in your editor
+s                | stash everything
+
+= COMMITS PANEL
+Enter            | see what the commit changed, file by file
+d                | drop the commit (interactive rebase)
+r                | reword its message
+s                | squash it into the one below
+f                | fixup into the one below
+Ctrl-j / Ctrl-k  | move the commit down or up in history
+R                | revert it as a new commit
+
+= BRANCHES PANEL
+Space            | check out the branch under the cursor
+n                | new branch from here
+d                | delete it
+r                | rebase the current branch onto this one
+M                | merge this one into the current branch
+f                | fetch
+
+= STASH PANEL
+Space            | apply the stash
+g                | pop it
+d                | drop it
+
+= PUSHING AND PULLING
+p                | pull
+P                | push
+Shift-P          | force push, with a confirmation

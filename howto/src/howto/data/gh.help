@@ -1,0 +1,69 @@
+# gh nests three deep: `gh pr create --fill`. Indented rows here are that
+# nesting, and `enter` on an @ row runs that node's own --help — so anything
+# not written down is still one keypress away.
+name:    gh
+what:    GitHub from the terminal — PRs, issues, runs, and the raw API
+check:   gh
+install: sudo dnf install gh   /   see cli.github.com
+docs:    gh <command> --help
+probe:   help
+help_cmd: gh {} --help
+
+= AM I LOGGED IN
+gh auth status   | which account, which scopes, which host
+gh auth login    | log in, in a browser
+gh auth refresh -s SCOPE | add a scope to an existing login
+gh repo view --web | open this repo in a browser
+
+= PULL REQUESTS
+@gh pr create    | open a PR from the current branch, prompting for the rest
+  --fill         | use the commit messages as title and body
+  --draft        | open it as a draft
+  --web          | finish it in the browser
+gh pr list       | open PRs in this repo
+gh pr status     | the ones relevant to you, including yours
+@gh pr view      | the PR for the current branch
+  123 --web      | open one in a browser
+gh pr diff       | the whole diff, in the terminal
+gh pr checks     | the CI checks and whether they passed
+gh pr checkout 123 | check out someone else's PR locally
+gh pr review --approve | approve it
+@gh pr merge     | merge it, prompting for how
+  --squash       | one commit on the target branch
+  --delete-branch | remove the branch after merging
+gh pr ready      | take a draft out of draft
+gh pr close 123  | close without merging
+
+= ISSUES
+gh issue list    | open issues
+gh issue create  | open a new one
+@gh issue view   | read one — `gh issue view 42`
+  --comments     | read it with the discussion
+gh issue close 42 | close it
+gh issue develop 42 --checkout | branch named after the issue, checked out
+
+= CI RUNS
+gh run list      | recent workflow runs
+@gh run view     | pick one and see its jobs
+  --log-failed   | just the output of the steps that failed
+  --job ID       | one job's log
+gh run watch     | follow a run until it finishes
+gh run rerun --failed | re-run only the failed jobs
+gh workflow list | the workflows this repo has
+gh workflow run NAME | trigger one by hand
+
+= THE API, WHEN THERE IS NO SUBCOMMAND
+@gh api          | raw JSON — `gh api repos/:owner/:repo`
+  --jq '.name'   | pull one field out without needing jq installed
+  --paginate     | follow every page
+  -X POST -f k=v | a write request
+
+= MISC
+gh repo clone OWNER/NAME | clone, using your existing auth
+gh repo fork --clone | fork and clone in one step
+gh release list  | releases
+gh release download TAG | fetch a release's assets
+gh browse FILE   | open that file on github.com at the current commit
+gh gist create F | a gist from a file
+
+= ALL FLAGS (from --help)

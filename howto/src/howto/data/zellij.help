@@ -1,0 +1,25 @@
+name:    zellij
+what:    starting and attaching sessions from the shell
+check:   zellij
+install: curl -4L https://github.com/zellij-org/zellij/releases/latest/download/zellij-x86_64-unknown-linux-musl.tar.gz \| tar xz -C ~/.local/bin
+docs:    zellij --help
+probe:   help
+
+# WSL2 note: the plain download times out on GitHub release assets. `curl -4`
+# fetches the same URL in about a second — a HEAD request succeeding proves
+# nothing, because it is the large transfer that stalls.
+
+= STARTING
+zellij           | start. The bottom bar lists every key, always
+zellij -s work   | start a named session
+@zellij attach   | attach to an existing one; `zellij a` is the short form
+zellij ls        | list them
+zellij ka        | kill every session
+zellij da        | delete every dead session's state
+
+= CHECKING IT OVER
+zellij setup --check | what it found: config path, shell, terminal features
+zellij setup --dump-config | the full default config, to copy bits out of
+zellij --version | the version, which decides which config keys parse
+
+= ALL FLAGS (from --help)

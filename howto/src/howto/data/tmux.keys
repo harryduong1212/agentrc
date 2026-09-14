@@ -1,0 +1,55 @@
+# Every key here is read back from the running tmux, not from tmux/tmux.conf —
+# so this pane describes the machine it is on. On this repo's config that means
+# the prefix is Ctrl-a, splits are | and -, and the mouse is on; on a stock tmux
+# the same rows will say Ctrl-b, % and ".
+name:    tmux
+what:    keeps things running when the connection drops
+check:   tmux
+install: sudo dnf install tmux   /   sudo apt install tmux
+docs:    man tmux — and tmux/tmux.conf in this repo is short enough to read
+probe:   tmux
+conf:    ~/.tmux.conf
+
+= SESSIONS — the reason it exists
+@detach-client       | detach. Everything inside keeps running, agent included
+@choose-tree -Zs     | pick a session from a list, without leaving tmux
+@rename-session      | rename the current session
+
+= WINDOWS — like browser tabs
+@new-window          | new window
+@rename-window       | rename the current window
+@next-window         | next window
+@previous-window     | previous window
+@choose-tree -Zw     | choose from every window in every session
+@kill-window         | close the window, after a confirmation
+
+= PANES — two things side by side
+@split-window -h     | split left and right, in the same directory
+@split-window -v     | split top and bottom
+@select-pane -L      | move to the pane on the left
+@select-pane -R      | the pane on the right
+@select-pane -U      | the pane above
+@select-pane -D      | the pane below
+@resize-pane -Z      | zoom this pane to fill the window. Again to go back
+@kill-pane           | close this pane, after a confirmation
+@select-pane -t :.+  | cycle to the next pane
+@next-layout         | cycle through the preset layouts
+@break-pane          | break this pane out into its own window
+
+= THE MOUSE — on, and the reason day one is survivable
+click            | focus a pane
+drag a border    | resize
+scroll           | scroll back through output
+drag to select   | copy, if your terminal emulator supports it
+
+= SCROLLING BACK — 50,000 lines of it
+@copy-mode           | enter copy mode, then arrow keys or PgUp to scroll
+q                | leave copy mode
+@paste-buffer        | paste what you copied
+/  (in copy mode)| search backwards through the scrollback
+
+= WHEN SOMETHING IS WRONG
+@source-file         | reload the config without restarting
+@clock-mode          | a clock, which proves the prefix is reaching tmux
+@list-keys           | every binding this tmux knows about
+@send-prefix         | send a literal prefix key to the program inside

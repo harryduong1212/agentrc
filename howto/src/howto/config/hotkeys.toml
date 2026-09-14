@@ -1,0 +1,109 @@
+# howto's own keys. This file IS the keymap — there is no second copy in the
+# code, so what you read here is what howto dispatches and what `?` advertises.
+#
+# To rebind, copy the one line you want into ~/.config/howto/hotkeys.toml:
+#
+#     [keys]
+#     quit = ["q"]          # just q; esc no longer quits
+#
+# Your list REPLACES the shipped one for that action, so removing a key you did
+# not want is possible. Everything you leave out keeps its default.
+#
+# A key is a single character, or one of these names:
+#   tab enter esc space backspace up down left right
+#   pgup pgdown home end shift+left shift+right shift+up shift+down
+#   ctrl+<letter>  f1..f12
+#
+# The defaults are superfile's, so muscle memory carries between the two. The
+# additions (1/2/3, r/R) are keys spf leaves unbound. ctrl+r is deliberately
+# avoided: spf binds it to file_panel_item_rename.
+
+[keys]
+next_pane  = ["tab", "L"]
+prev_pane  = ["shift+left", "H"]
+focus_list = ["s"]
+confirm    = ["enter", "right", "l"]
+back       = ["h", "left", "backspace"]
+
+view_keys = ["1"]
+view_help = ["2"]
+view_scan = ["3"]
+
+down      = ["down", "j"]
+up        = ["up", "k"]
+page_down = ["pgdown"]
+page_up   = ["pgup"]
+home      = ["home"]
+end       = ["end"]
+
+search      = ["/"]
+favorite    = ["P"]
+refresh     = ["r"]
+refresh_all = ["R"]
+help        = ["?"]
+quit        = ["q", "esc"]
+
+scan_select_mode = ["v"]
+scan_extend      = ["J", "K"]
+scan_mark_all    = ["A"]
+
+# What `?` says each one does. Wording only — the keys come from [keys] above,
+# which is why the overlay cannot advertise a binding howto does not have.
+[desc]
+next_pane  = "next pane"
+prev_pane  = "previous pane"
+focus_list = "focus the tool list"
+confirm    = "into the right pane, open a node, or write a SCAN stub"
+back       = "back to the list, or close a node"
+
+view_keys = "the KEYS view"
+view_help = "the HELP view"
+view_scan = "the SCAN tab — what this machine has"
+
+down      = "down"
+up        = "up"
+page_down = "page down"
+page_up   = "page up"
+home      = "first row"
+end       = "last row"
+
+search      = "search the focused pane"
+favorite    = "pin or unpin this tool"
+refresh     = "re-probe this tool's active view"
+refresh_all = "re-probe everything"
+help        = "this list"
+quit        = "quit"
+
+scan_select_mode = "select mode"
+scan_extend      = "extend the marked set"
+scan_mark_all    = "mark every NEW row"
+
+# Compact wording for the footer. The key beside it still comes from [keys].
+[short]
+next_pane       = "pane"
+view_keys       = "keys"
+view_scan       = "scan"
+search          = "search"
+favorite        = "favourite"
+refresh         = "refresh"
+help            = "keys"
+quit            = "quit"
+confirm         = "write"
+scan_select_mode = "select"
+scan_mark_all   = "mark NEW"
+
+# The actions advertised at the bottom of each mode. Missing bindings are
+# reported instead of printing a footer that cannot be used.
+[footer]
+view = ["next_pane", "view_keys", "view_scan", "search", "favorite", "refresh", "help", "quit"]
+scan = ["confirm", "scan_select_mode", "scan_mark_all", "refresh", "view_keys", "help"]
+
+# How `?` groups them, and in what order. Every action in [keys] must appear
+# here exactly once — howto reports it as a config error otherwise, rather than
+# quietly dispatching a key it never tells you about.
+[overlay]
+panes    = ["next_pane", "prev_pane", "focus_list", "confirm", "back"]
+views    = ["view_keys", "view_help", "view_scan"]
+moving   = ["down", "up", "page_down", "page_up", "home", "end"]
+doing    = ["search", "favorite", "refresh", "refresh_all", "help", "quit"]
+"scan tab" = ["scan_select_mode", "scan_extend", "scan_mark_all"]

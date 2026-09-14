@@ -1,0 +1,52 @@
+# Upstream defaults, written literally. zellij's keys live in config.kdl, and a
+# config that has never been edited does not contain them — so there is nothing
+# to read back until you rebind something. The SCAN tab generates a probed file
+# if you do.
+name:    zellij
+what:    a multiplexer that shows you its own keys. The tmux alternative
+check:   zellij
+install: see the help view — the download needs curl -4 on WSL2
+docs:    the bar along the bottom of the screen, which is always current
+
+= THE IDEA
+Ctrl-p           | PANE mode — the bar changes to show what is now bound
+Ctrl-t           | TAB mode
+Ctrl-s           | SEARCH / scroll mode
+Ctrl-o           | SESSION mode
+Ctrl-h           | MOVE mode
+Ctrl-n           | RESIZE mode
+Esc              | back out of whatever mode you are in
+
+= SESSIONS
+Ctrl-o d         | detach; everything keeps running
+Ctrl-o w         | the session manager
+
+= PANES
+Ctrl-p n         | new pane
+Ctrl-p d         | new pane, split downwards
+Ctrl-p r         | new pane, split to the right
+Ctrl-p x         | close this pane
+Ctrl-p f         | fullscreen this pane, again to restore
+Ctrl-p arrow     | move focus in that direction
+Ctrl-p w         | floating pane, on top of the rest
+Alt-arrow        | move focus without entering a mode
+Alt-n            | new pane, without entering a mode
+
+= TABS
+Ctrl-t n         | new tab
+Ctrl-t x         | close tab
+Ctrl-t r         | rename tab
+Ctrl-t arrow     | previous / next tab
+Ctrl-t 1         | jump to tab 1
+Alt-t            | new tab, without entering a mode
+
+= SCROLLING AND COPYING
+Ctrl-s           | enter scroll mode
+Ctrl-s PgUp      | page up through the scrollback
+Ctrl-s e         | dump the scrollback into your editor
+Ctrl-s Ctrl-c    | leave scroll mode
+mouse scroll     | works without any mode
+
+= RESIZING
+Ctrl-n arrow     | grow or shrink in that direction
+Alt-+ / Alt--    | resize without entering a mode

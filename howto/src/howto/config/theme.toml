@@ -1,0 +1,22 @@
+# Eight colour roles. Foreground only — the background stays whatever your
+# terminal already is, so one theme reads on a light and a dark terminal alike.
+#
+# Override in ~/.config/howto/theme.toml:
+#
+#     [colors]
+#     key = "bright-cyan"
+#
+# Names: default black red green yellow blue magenta cyan white, each also with
+# a "bright-" prefix. A number 0-255 works too, if your terminal has 256 colours
+# and you know which one you want. "default" means the terminal's own
+# foreground — the right answer when a role should not stand out at all.
+
+[colors]
+group = "cyan"          # a group heading
+key   = "yellow"        # the key column
+dim   = "bright-black"  # unbound rows, timestamps, hints
+sel   = "green"         # the cursor
+bar   = "blue"          # the tab bar, the ? overlay ground
+warn  = "red"           # a probe that could not run
+ok    = "green"         # a tool that is installed
+tab   = "magenta"       # the active tab

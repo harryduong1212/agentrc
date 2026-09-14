@@ -1,0 +1,13 @@
+# bat pages through less, so the keys inside it are less's keys. Only the few
+# that differ are worth a row of their own — see the less view for the rest.
+name:    bat
+what:    the keys once bat has opened a file and handed you to the pager
+check:   bat
+install: sudo dnf install bat   /   sudo apt install bat   (binary: batcat)
+docs:    h inside it, which is less's own help
+
+= IT IS A PAGER, SO
+q                | quit
+/text            | search. Every `less` key applies here
+Space            | one screen forward
+g / G            | top / bottom

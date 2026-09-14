@@ -1,8 +1,8 @@
 # agentrc
 
 My terminal setup: two coding agents behind one LLM gateway, plus the shell,
-tmux, vim and git config that goes with them. Linux only — a Fedora laptop and
-a WSL box, and whatever machine comes next.
+tmux, vim and git config that goes with them. The shell setup targets Linux and
+macOS; `howto` also installs on Windows.
 
 ```bash
 git clone https://github.com/harryduong1212/agentrc.git ~/agentrc
@@ -12,6 +12,12 @@ cd ~/agentrc
 ```
 
 Then fill in `~/.config/based/omniroute` and open a new shell.
+
+On Windows, install the standalone `howto` tool from PowerShell:
+
+```powershell
+.\install.ps1
+```
 
 ## Why nothing here is secret
 
@@ -35,7 +41,10 @@ file here, that is the bug.
 |---|---|---|
 | `shell/common.sh` | `~/.based-shell.sh` | Points both agents at the gateway; adds aliases and `omniroute-where` |
 | `bin/claude`, `bin/codex` | `~/.local/bin/` | Makes both agents one word. Finds the real binary inside the VS Code extension at run time, so an extension update cannot break them |
-| `codex/config.toml.template` | `~/.codex/config.toml` | Codex's gateway provider. `install.sh` fills in the URL |
+| `bin/howto`, `howto/` | `~/.local/bin/howto` from an isolated package; the wrapper is the no-venv fallback | Two views over every tool here: `KEYS` what to press inside it, `HELP` what to type at the shell. Keys are read back from live config and commands from `--help`. Run `howto config` to discover its four TOML settings files |
+| `howto/src/howto/data/*` | read by `howto` | The content, one hand-editable file per tool and view — [the format](howto/src/howto/data/README.md) |
+| `codex/config.toml.template` | `~/.codex/config.toml` | Codex's gateway provider. `install.sh` fills in the URL and model catalog path |
+| `codex/build-model-catalog.py` | `~/.codex/model-catalog.json` | Keeps Codex's current models and adds the `codex-pool-{sol,luna,terra}` OmniRoute choices |
 | `omniroute/apply-routing.sh` | the gateway itself | Reconciles the gateway's aliases and pattern rules against `~/.config/based/omniroute-routing.json`. `--seed` writes that file from your live gateway, `--dry-run` diffs, `--show` dumps |
 | `omniroute/switch-combo.sh` | every surface at once | Moves the combo id in the config file, VS Code's settings and `~/.codex/config.toml` together, so half the stack cannot stay on the old one |
 | `omniroute/routing.example.json` | nowhere — read it | One real routing config, machine-bound ids replaced by placeholders. Documentation for the file `--seed` generates, not a file to copy |
