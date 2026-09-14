@@ -175,7 +175,7 @@ def cmd_config(args):
 
 USAGE = """howto — the keys and the commands for the tools on this machine
 
-  howto                     the browser; use ? for its live keymap
+  howto                     the browser; its full live keymap stays at the bottom
   howto --list              every row as plain text, for grepping
   howto where <tool>        which layer wins, and what it shadows
   howto new <tool> --keys   copy a template into your own config dir

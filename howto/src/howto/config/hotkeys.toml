@@ -46,9 +46,12 @@ quit        = ["q", "esc"]
 scan_select_mode = ["v"]
 scan_extend      = ["J", "K"]
 scan_mark_all    = ["A"]
+hotkeys_prev     = ["["]
+hotkeys_next     = ["]"]
 
-# What `?` says each one does. Wording only — the keys come from [keys] above,
-# which is why the overlay cannot advertise a binding howto does not have.
+# What the always-visible bottom panel and `?` say each one does. Wording only
+# — the keys come from [keys] above, so neither surface can advertise a binding
+# howto does not have.
 [desc]
 next_pane  = "next pane"
 prev_pane  = "previous pane"
@@ -77,26 +80,54 @@ quit        = "quit"
 scan_select_mode = "select mode"
 scan_extend      = "extend the marked set"
 scan_mark_all    = "mark every NEW row"
+hotkeys_prev     = "previous hotkey page"
+hotkeys_next     = "next hotkey page"
 
-# Compact wording for the footer. The key beside it still comes from [keys].
+# Compact labels keep the bottom grid readable. The expanded descriptions
+# above remain the wording used by `?`.
 [short]
-next_pane       = "pane"
-view_keys       = "keys"
-view_scan       = "scan"
-search          = "search"
-favorite        = "favourite"
-refresh         = "refresh"
-help            = "keys"
-quit            = "quit"
-confirm         = "write"
-scan_select_mode = "select"
-scan_mark_all   = "mark NEW"
+next_pane = "next pane"
+prev_pane = "previous pane"
+focus_list = "tool list"
+confirm = "open / write"
+back = "back / close"
+view_keys = "KEYS view"
+view_help = "HELP view"
+view_scan = "SCAN view"
+down = "down"
+up = "up"
+page_down = "page down"
+page_up = "page up"
+home = "first row"
+end = "last row"
+search = "search"
+favorite = "favourite"
+refresh = "refresh tool"
+refresh_all = "refresh all"
+help = "expanded keys"
+quit = "quit"
+scan_select_mode = "select mode"
+scan_extend = "extend selection"
+scan_mark_all = "mark NEW"
+hotkeys_prev = "previous hotkeys"
+hotkeys_next = "next hotkeys"
 
-# The actions advertised at the bottom of each mode. Missing bindings are
-# reported instead of printing a footer that cannot be used.
+# The actions shown in the one always-visible bottom panel. Every action is
+# placed exactly once in each mode. The grid adds columns when the terminal gets
+# wider and pages when they do not all fit.
 [footer]
-view = ["next_pane", "view_keys", "view_scan", "search", "favorite", "refresh", "help", "quit"]
-scan = ["confirm", "scan_select_mode", "scan_mark_all", "refresh", "view_keys", "help"]
+view = [
+  "down", "up", "page_down", "page_up", "home", "end", "search", "favorite",
+  "next_pane", "prev_pane", "focus_list", "confirm", "back", "view_keys",
+  "view_help", "view_scan", "refresh", "refresh_all", "help", "quit",
+  "scan_select_mode", "scan_extend", "scan_mark_all", "hotkeys_prev", "hotkeys_next",
+]
+scan = [
+  "down", "up", "page_down", "page_up", "home", "end", "search",
+  "scan_select_mode", "confirm", "scan_extend", "scan_mark_all", "back",
+  "view_keys", "view_help", "view_scan", "next_pane", "prev_pane", "focus_list",
+  "favorite", "refresh", "refresh_all", "help", "quit", "hotkeys_prev", "hotkeys_next",
+]
 
 # How `?` groups them, and in what order. Every action in [keys] must appear
 # here exactly once — howto reports it as a config error otherwise, rather than
@@ -105,5 +136,5 @@ scan = ["confirm", "scan_select_mode", "scan_mark_all", "refresh", "view_keys", 
 panes    = ["next_pane", "prev_pane", "focus_list", "confirm", "back"]
 views    = ["view_keys", "view_help", "view_scan"]
 moving   = ["down", "up", "page_down", "page_up", "home", "end"]
-doing    = ["search", "favorite", "refresh", "refresh_all", "help", "quit"]
+doing    = ["search", "favorite", "refresh", "refresh_all", "help", "quit", "hotkeys_prev", "hotkeys_next"]
 "scan tab" = ["scan_select_mode", "scan_extend", "scan_mark_all"]

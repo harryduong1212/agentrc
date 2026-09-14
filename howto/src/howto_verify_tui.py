@@ -11,7 +11,8 @@ OUT = Path(os.environ["HOWTO_VERIFY_OUT"])
 
 def run(scr):
     spec, errors = theme.load()
-    theme.apply(curses, spec)
+    if theme.apply(curses, spec):
+        scr.bkgd(" ", curses.color_pair(theme.TEXT))
     keymap.bind(curses)
     instance = app.App(errors)
     screens = 0
@@ -36,6 +37,53 @@ def run(scr):
         for index, item in enumerate(instance.left.rows)
         if isinstance(item, items.ToolItem)
     }
+
+    # The one live keymap panel survives width and height changes. Every row is
+    # reachable through its pages even when only one column fits.
+    original = scr.getmaxyx()
+    expected = set(instance.km.footer_rows()[instance.mode])
+    for size in ((18, 50), (24, 80), (30, 120), (40, 140), (50, 200)):
+        curses.resizeterm(*size)
+        instance.hotkey_at = 0
+        reached = set()
+        while True:
+            instance.draw(scr)
+            screen = "\n".join(
+                scr.instr(y, 0).decode("utf-8", "replace")
+                for y in range(scr.getmaxyx()[0])
+            )
+            if "Hotkeys" not in screen or " of " not in screen:
+                raise AssertionError(f"Hotkeys panel did not render at {size}")
+            rows = instance.km.footer_rows()[instance.mode]
+            reached.update(rows[instance.hotkey_at : instance.hotkey_at + instance.hotkey_page])
+            if instance.hotkey_at + instance.hotkey_page >= len(rows):
+                break
+            instance.hotkey_at += instance.hotkey_page
+        if reached != expected:
+            raise AssertionError(f"Hotkeys pages omitted rows at {size}")
+
+    curses.resizeterm(17, 49)
+    instance.draw(scr)
+    if "window too small" not in scr.instr(0, 0).decode("utf-8", "replace"):
+        raise AssertionError("small-window fallback did not render")
+    curses.resizeterm(*original)
+    instance.draw(scr)
+    if "Hotkeys" not in "\n".join(
+        scr.instr(y, 0).decode("utf-8", "replace")
+        for y in range(scr.getmaxyx()[0])
+    ):
+        raise AssertionError("TUI did not recover after resize")
+
+    # Feedback shares the Hotkeys panel instead of creating another footer.
+    instance.status = "status stays inside Hotkeys"
+    instance.draw(scr)
+    screen = "\n".join(
+        scr.instr(y, 0).decode("utf-8", "replace")
+        for y in range(scr.getmaxyx()[0])
+    )
+    if "status stays inside Hotkeys" not in screen:
+        raise AssertionError("status did not render inside Hotkeys")
+    instance.status = ""
 
     # An empty ALL FLAGS group must render rows from the live --help probe.
     instance.view = "help"
@@ -83,7 +131,7 @@ def run(scr):
 
     OUT.write_text(
         f"screens {screens}\ntools {len(instance.cat)}\n"
-        "live-help ok\nsearch ok\noverlay ok\n"
+        "hotkey-grid ok\nresize ok\nlive-help ok\nsearch ok\noverlay ok\n"
         f"errors {len(instance.errors)}\n"
     )
 

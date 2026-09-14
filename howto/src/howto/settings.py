@@ -2,9 +2,9 @@
 
 | file | holds |
 |---|---|
-| `hotkeys.toml` | every action's keys, its wording, and which section of `?` it sits in |
+| `hotkeys.toml` | every action's keys, wording, bottom order, and `?` section |
 | `tools.toml`   | what SCAN knows how to look for |
-| `theme.toml`   | the eight colour roles |
+| `theme.toml`   | the display colour roles and background |
 | `config.toml`  | the sizes and timeouts |
 
 The shipped copy under `howto/config/` is the **only** source of truth — there

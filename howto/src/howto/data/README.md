@@ -156,11 +156,13 @@ to an agent: *"fill this in for zellij from its docs."*
 never overwrites one already there. Tables merge over the shipped files;
 scalars and lists replace them.
 
-- `hotkeys.toml` binds every action and drives dispatch, the `?` overlay and
-  the footer from the same table.
+- `hotkeys.toml` binds every action and drives dispatch, the `?` overlay, and
+  the always-visible, responsive Hotkeys panel from one table.
 - `tools.toml` says what SCAN looks for.
-- `theme.toml` maps the eight display roles to terminal colours.
-- `config.toml` controls pane sizes, probe timeout and generated-stub limits.
+- `theme.toml` maps the display roles and background to terminal colours. The
+  shipped values match superfile's Catppuccin Mocha theme.
+- `config.toml` controls pane and Hotkeys-panel sizes, probe timeout and
+  generated-stub limits.
 
 Two habits worth keeping:
 

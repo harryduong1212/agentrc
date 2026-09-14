@@ -17,6 +17,8 @@ class App:
         self.active_tool = ""
         self.overlay = False
         self.overlay_at = 0
+        self.hotkey_at = 0
+        self.hotkey_page = 1
         self.status = ""
         self.docs = {}
         self.open = set()
@@ -332,7 +334,9 @@ class App:
             scr.refresh()
             return
         left_width = self.lay.sidebar_width(width)
-        pane_height = height - self.lay.frame_rows
+        hotkey_height = self.lay.hotkey_height(height)
+        hotkey_top = height - hotkey_height
+        pane_height = hotkey_top
         self.left.width, self.left.height = left_width, pane_height
         self.right.width = width - left_width - self.lay.pane_gap
         self.right.height = pane_height
@@ -343,9 +347,9 @@ class App:
         else:
             self.draw_list(scr, height, left_width)
             self.draw_content(scr, height, width, left_width)
-        for y in range(2, height - 1):
-            ui.put(scr, y, left_width, "│", curses.color_pair(theme.DIM))
-        self.draw_footer(scr, height, width)
+        for y in range(2, hotkey_top):
+            ui.put(scr, y, left_width, "│", curses.color_pair(theme.BORDER))
+        self.draw_hotkeys(scr, height, width)
         if self.overlay:
             self.draw_overlay(scr, height, width)
         scr.refresh()
@@ -373,8 +377,8 @@ class App:
         if ui.search_bar_visible(self.left, focused):
             self.draw_search(scr, y, 1, left_width - 2, self.left)
             y += 1
-        self.left.follow_cursor(height - 1 - y)
-        start, visible = self.left.visible(height - 1 - y)
+        self.left.follow_cursor(self.left.height - y)
+        start, visible = self.left.visible(self.left.height - y)
         for offset, item in enumerate(visible):
             index = start + offset
             if isinstance(item, ui.Divider):
@@ -419,7 +423,7 @@ class App:
         if ui.search_bar_visible(self.right, focused):
             self.draw_search(scr, y, x, width - x - 2, self.right)
             y += 1
-        self.draw_rows(scr, y, x, height - 1 - y, focused)
+        self.draw_rows(scr, y, x, self.right.height - y, focused)
 
     def active_reading(self, loaded):
         for group in loaded.groups:
@@ -460,8 +464,8 @@ class App:
         if ui.search_bar_visible(self.scanpane, True):
             self.draw_search(scr, y, 1, left_width - 2, self.scanpane)
             y += 1
-        self.scanpane.follow_cursor(height - 1 - y)
-        start, visible = self.scanpane.visible(height - 1 - y)
+        self.scanpane.follow_cursor(self.scanpane.height - y)
+        start, visible = self.scanpane.visible(self.scanpane.height - y)
         pairs = {
             scan.NEW: theme.OK, scan.STALE: theme.WARN,
             scan.SHADOWED: theme.KEY, scan.COVERED: theme.DIM,
@@ -483,7 +487,7 @@ class App:
             ui.put(scr, y, 0, head.ljust(label_width)[:label_width], attr)
             ui.put(scr, y, label_width, item.found.state, curses.color_pair(pairs[item.found.state]))
             y += 1
-        self.draw_stub_preview(scr, height, left_width + 2)
+        self.draw_stub_preview(scr, self.scanpane.height, left_width + 2)
 
     def draw_stub_preview(self, scr, height, x):
         current = self.scanpane.current()
@@ -520,13 +524,42 @@ class App:
             attr = curses.color_pair(theme.DIM)
         ui.put(scr, y, x, text.ljust(width), attr)
 
-    def draw_footer(self, scr, height, width):
-        if self.status:
-            bar = f" {self.status} "
-        else:
-            hints = self.km.footer_rows().get(self.mode, ())
-            bar = " " + "   ".join(f"{key} {label}" for key, label in hints) + " "
-        ui.put(scr, height - 1, 0, bar.ljust(width - 1)[: width - 1], curses.color_pair(theme.BAR))
+    def draw_hotkeys(self, scr, height, width):
+        """One resize-safe, paged grid at the bottom."""
+        panel_height = self.lay.hotkey_height(height)
+        top = height - panel_height
+        bottom = height - 1
+        rows = self.km.footer_rows().get(self.mode, ())
+        panel_width = width - 1
+        body_height = max(0, panel_height - 2)
+        notice = self.status
+        notice_rows = 1 if notice and body_height > 1 else 0
+        body_height -= notice_rows
+        cells, self.hotkey_at, self.hotkey_page, cell_width = layout.hotkey_grid(
+            rows, max(0, panel_width - 4), body_height, self.hotkey_at
+        )
+        if not rows or panel_width < 8 or bottom <= top:
+            return
+        border = curses.color_pair(theme.BORDER)
+        last = min(len(rows), self.hotkey_at + self.hotkey_page)
+        shown = f"{self.hotkey_at + 1}–{last} of {len(rows)}"
+        label = f" Hotkeys  {shown} "
+        fill = max(0, panel_width - len(label) - 2)
+        ui.put(scr, top, 0, "╭" + label + "─" * fill + "╮", border)
+        if notice:
+            ui.put(scr, top + 1, 2, notice[: max(0, panel_width - 4)], curses.color_pair(theme.BAR))
+        row_top = top + 1 + notice_rows
+        for y in range(top + 1, bottom):
+            ui.put(scr, y, 0, "│", border)
+            ui.put(scr, y, panel_width - 1, "│", border)
+        ui.put(scr, bottom, 0, "╰" + "─" * (panel_width - 2) + "╯", border)
+        for row_no, column, (key, desc) in cells:
+            x = 2 + column * cell_width
+            available = max(1, min(cell_width - 1, panel_width - x - 1))
+            key_width = min(len(key), max(1, available // 2))
+            ui.put(scr, row_top + row_no, x, key[:key_width], curses.color_pair(theme.KEY))
+            desc_x = x + key_width + 1
+            ui.put(scr, row_top + row_no, desc_x, desc[: max(0, available - key_width - 1)])
 
     def overlay_rows(self):
         rows, last = [], None
@@ -692,6 +725,10 @@ class App:
             self.toggle_favorite()
         elif action in ("refresh", "refresh_all"):
             self.refresh(action == "refresh_all")
+        elif action == "hotkeys_next":
+            self.hotkey_at += self.hotkey_page
+        elif action == "hotkeys_prev":
+            self.hotkey_at = max(0, self.hotkey_at - self.hotkey_page)
         elif action == "scan_select_mode" and self.mode == "scan":
             self.select_mode = not self.select_mode
             self.status = f"select mode {'on' if self.select_mode else 'off'}"
@@ -775,7 +812,8 @@ class App:
 def main(scr):
     curses.curs_set(0)
     spec, theme_errors = theme.load()
-    theme.apply(curses, spec)
+    if theme.apply(curses, spec):
+        scr.bkgd(" ", curses.color_pair(theme.TEXT))
     keymap.bind(curses)
     scr.keypad(True)
     app = App(startup_errors=theme_errors)

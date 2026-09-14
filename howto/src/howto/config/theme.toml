@@ -1,22 +1,23 @@
-# Eight colour roles. Foreground only — the background stays whatever your
-# terminal already is, so one theme reads on a light and a dark terminal alike.
+# Catppuccin Mocha, matching superfile's shipped theme of that name. curses
+# exposes an indexed palette, so RGB values are mapped to the nearest xterm-256
+# colour on terminals that cannot address RGB directly.
 #
 # Override in ~/.config/howto/theme.toml:
 #
 #     [colors]
-#     key = "bright-cyan"
+#     key = "#89dceb"
 #
-# Names: default black red green yellow blue magenta cyan white, each also with
-# a "bright-" prefix. A number 0-255 works too, if your terminal has 256 colours
-# and you know which one you want. "default" means the terminal's own
-# foreground — the right answer when a role should not stand out at all.
+# Values may be #RRGGBB, a 0-255 palette index, or a terminal colour name.
 
 [colors]
-group = "cyan"          # a group heading
-key   = "yellow"        # the key column
-dim   = "bright-black"  # unbound rows, timestamps, hints
-sel   = "green"         # the cursor
-bar   = "blue"          # the tab bar, the ? overlay ground
-warn  = "red"           # a probe that could not run
-ok    = "green"         # a tool that is installed
-tab   = "magenta"       # the active tab
+background = "#1e1e2e" # full_screen_bg
+text   = "#a6adc8"      # full_screen_fg
+group  = "#74c7ec"      # sidebar_title
+key    = "#89dceb"      # help_menu_hotkey
+dim    = "#868686"      # sidebar_divider
+sel    = "#98d0fd"      # file_panel_item_selected_fg
+bar    = "#a6adc8"      # footer_fg
+warn   = "#f38ba8"      # error
+ok     = "#a6e3a1"      # correct
+tab    = "#b4befe"      # file_panel_border_active
+border = "#6c7086"      # footer_border

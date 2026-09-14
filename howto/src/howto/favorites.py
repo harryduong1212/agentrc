@@ -1,8 +1,8 @@
 """spf's `sidebar/pinned.go`, as functions over a tuple.
 
-Load / Save / Toggle / **Clean**, where Load drops entries whose target is gone
-and re-saves. A favourite whose file you deleted should not keep a slot at the
-top of the list forever.
+Load / Save / Toggle. Load hides entries absent from the current catalog but
+keeps them on disk, because a temporarily unavailable data layer must not erase
+a user's favourite.
 
 The names are an immutable tuple and every operation returns a new one; the file
 write is the only side effect, and it is the return value of the two functions
@@ -54,9 +54,7 @@ def write(names):
 
 
 def load(known):
-    names, changed = read(known)
-    if changed:
-        write(names)  # Clean: the drop is persisted, not merely hidden
+    names, _ = read(known)
     return names
 
 

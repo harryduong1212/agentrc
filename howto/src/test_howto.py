@@ -31,8 +31,11 @@ class KeymapTests(unittest.TestCase):
         overlay = {code for entry in km.entries for code in keymap.codes(entry.keys)}
         self.assertFalse(km.errors)
         self.assertEqual(overlay, set(dispatch))
-        for _, rows in km.footer:
-            for action, _ in rows:
+        for _, actions in km.footer:
+            shown = list(actions)
+            self.assertEqual(set(shown), set(km.actions()))
+            self.assertEqual(len(shown), len(set(shown)))
+            for action in shown:
                 self.assertIn(action, dispatch.values())
 
     def test_build_reports_drift(self):
@@ -45,8 +48,31 @@ class KeymapTests(unittest.TestCase):
         self.assertIn("hidden", joined)
         self.assertIn("more than one section", joined)
         self.assertIn("[overlay] lists 'empty'", joined)
-        self.assertIn("[footer.view] lists 'missing'", joined)
-        self.assertIn("[footer.view] lists 'empty'", joined)
+        self.assertIn("[footer] view lists 'missing'", joined)
+        self.assertIn("[footer] view lists 'empty'", joined)
+
+    def test_footer_reports_duplicate_and_omitted_actions(self):
+        km = keymap.build({
+            "keys": {"one": ["x"], "two": ["y"]},
+            "desc": {"one": "first", "two": "second"},
+            "overlay": {"all": ["one", "two"]},
+            "footer": {"view": ["one", "one"]},
+        })
+        joined = "\n".join(km.errors)
+        self.assertIn("lists 'one' more than once", joined)
+        self.assertIn("omits two", joined)
+
+    def test_build_reports_bad_short_labels(self):
+        km = keymap.build({
+            "keys": {"one": ["x"]},
+            "desc": {"one": "first"},
+            "short": {"one": ["not text"], "ghost": "missing"},
+            "overlay": {"all": ["one"]},
+            "footer": {"view": ["one"]},
+        })
+        joined = "\n".join(km.errors)
+        self.assertIn("[short] 'one' must be text", joined)
+        self.assertIn("[short] lists unknown action 'ghost'", joined)
 
     def test_build_reports_unknown_key_name(self):
         km = keymap.build({
@@ -218,6 +244,14 @@ class LayerTests(unittest.TestCase):
                 self.assertTrue(favorites.write(("b", "a")))
                 self.assertEqual(favorites.read({"a", "b"})[0], ("a", "b"))
 
+    def test_load_does_not_erase_a_temporarily_missing_tool(self):
+        with tempfile.TemporaryDirectory() as raw:
+            target = Path(raw) / "favorites.json"
+            target.write_text('["missing", "present"]\n')
+            with mock.patch.object(favorites, "path", return_value=target):
+                self.assertEqual(favorites.load({"present"}), ("present",))
+                self.assertEqual(target.read_text(), '["missing", "present"]\n')
+
 
 class ConfigTests(unittest.TestCase):
     def test_every_shipped_toml_loads(self):
@@ -243,6 +277,11 @@ class ConfigTests(unittest.TestCase):
         with mock.patch.object(settings, "load", return_value=(merged, ())):
             _, errors = theme.load()
         self.assertTrue(errors)
+
+    def test_theme_maps_spf_hex_to_xterm_palette(self):
+        self.assertEqual(theme.color_number("#1e1e2e"), 235)
+        self.assertEqual(theme.color_number("#89dceb"), 116)
+        self.assertTrue(theme.valid_color("#f38ba8"))
 
     def test_settings_reports_unknown_user_table(self):
         with tempfile.TemporaryDirectory() as raw:
@@ -279,6 +318,26 @@ class ConfigTests(unittest.TestCase):
                 target.write_text("value = 'mine'\n")
                 self.assertEqual(cli.cmd_config([]), 0)
                 self.assertEqual(target.read_text(), "value = 'mine'\n")
+
+
+class HotkeyGridTests(unittest.TestCase):
+    def test_grid_adds_columns_as_width_grows(self):
+        rows = tuple((str(i), f"action {i}") for i in range(20))
+        narrow = layout.hotkey_grid(rows, 21, 4)
+        wide = layout.hotkey_grid(rows, 88, 4)
+        self.assertEqual(narrow[2], 4)
+        self.assertEqual(wide[2], 16)
+
+    def test_grid_pages_and_clamps_after_resize(self):
+        rows = tuple((str(i), f"action {i}") for i in range(25))
+        cells, start, capacity, _ = layout.hotkey_grid(rows, 44, 3, 999)
+        self.assertEqual((start, capacity), (24, 6))
+        self.assertEqual([cell[2] for cell in cells], [rows[24]])
+
+    def test_grid_handles_no_drawable_area(self):
+        rows = (("q", "quit"),)
+        self.assertEqual(layout.hotkey_grid(rows, 0, 3), ((), 0, 0, 0))
+        self.assertEqual(layout.hotkey_grid(rows, 20, 0), ((), 0, 0, 0))
 
 
 if __name__ == "__main__":

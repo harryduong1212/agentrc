@@ -1,11 +1,10 @@
 """howto's own keys, read from `hotkeys.toml`.
 
-One table drives dispatch AND the `?` overlay, so howto's advertised keys cannot
-drift from its real ones — which is exactly the bug class this tool exists to
-fix. Making it a data file does not weaken that: both still come from the single
-`Keymap` this module builds, and an action in `[keys]` that no section lists is
-reported as a config error rather than dispatching a key nothing tells you
-about.
+One table drives dispatch, the always-visible bottom panel AND the `?` overlay,
+so howto's advertised keys cannot drift from its real ones — exactly the bug
+class this tool exists to fix. Making it a data file does not weaken that: every
+surface comes from the single `Keymap` this module builds, and omissions are
+reported as config errors rather than hiding working keys.
 
 Symbolic names live here and not in the TOML on purpose. `esc` being 27 is a
 fact about terminals, not a preference; what is configurable is which of them
@@ -99,7 +98,8 @@ class Entry(NamedTuple):
 
 class Keymap(NamedTuple):
     entries: tuple  # in overlay order — sections, then actions within them
-    footer: tuple  # (mode, ((action, short label), ...)) pairs
+    footer: tuple  # (mode, (action, ...)) pairs
+    short: tuple  # (action, compact description) pairs
     errors: tuple
 
     def dispatch(self):
@@ -119,20 +119,29 @@ class Keymap(NamedTuple):
         return tuple(e.action for e in self.entries)
 
     def footer_rows(self):
-        """Footer actions resolved from the same entries as dispatch."""
-        by_action = {entry.action: entry.keys for entry in self.entries}
+        """Bottom rows resolved from the same entries as dispatch and `?`."""
+        by_action = {entry.action: entry for entry in self.entries}
+        short = dict(self.short)
         return {
-            mode: tuple((by_action[action][0], label) for action, label in rows)
-            for mode, rows in self.footer
+            mode: tuple(
+                (spec(by_action[action].keys), short.get(action, by_action[action].desc))
+                for action in actions
+                if action in by_action
+            )
+            for mode, actions in self.footer
         }
+
+    def action_spec(self, action):
+        entry = next((entry for entry in self.entries if entry.action == action), None)
+        return spec(entry.keys) if entry else ""
 
 
 def build(data):
     """Pure: a parsed hotkeys.toml in, a Keymap out. No disk, no curses."""
     keys = settings.section(data, "keys")
     desc = settings.section(data, "desc")
-    overlay = settings.section(data, "overlay")
     short = settings.section(data, "short")
+    overlay = settings.section(data, "overlay")
     footer_spec = settings.section(data, "footer")
 
     errors, entries, placed, claimed = [], [], set(), {}
@@ -181,19 +190,28 @@ def build(data):
             entries.append(Entry(action, action_keys, wording, "other"))
     footer = {}
     for mode, listed in footer_spec.items():
-        rows = []
+        actions, shown = [], set()
         for action in settings.as_keys(listed):
             action_keys = settings.as_keys(keys.get(action))
             if not action_keys:
-                errors.append(f"hotkeys: [footer.{mode}] lists '{action}', which has no keys")
+                errors.append(f"hotkeys: [footer] {mode} lists '{action}', which has no keys")
                 continue
-            label = short.get(action, action)
-            if not isinstance(label, str):
-                errors.append(f"hotkeys: [short] '{action}' must be text")
-                label = action
-            rows.append((action, label))
-        footer[mode] = tuple(rows)
-    return Keymap(tuple(entries), tuple(footer.items()), tuple(errors))
+            if action in shown:
+                errors.append(f"hotkeys: [footer] {mode} lists '{action}' more than once")
+                continue
+            shown.add(action)
+            actions.append(action)
+        missing = [action for action in keys if settings.as_keys(keys[action]) and action not in shown]
+        if missing:
+            errors.append(f"hotkeys: [footer] {mode} omits {', '.join(missing)}")
+        footer[mode] = tuple(actions)
+    for action, value in short.items():
+        if action not in keys:
+            errors.append(f"hotkeys: [short] lists unknown action '{action}'")
+        elif not isinstance(value, str):
+            errors.append(f"hotkeys: [short] '{action}' must be text")
+    compact = tuple((action, value) for action, value in short.items() if isinstance(value, str))
+    return Keymap(tuple(entries), tuple(footer.items()), compact, tuple(errors))
 
 
 def load():

@@ -1,12 +1,16 @@
 # Sizes and timeouts. Override in ~/.config/howto/config.toml.
 
 [layout]
-terminal_min_height = 10
+terminal_min_height = 18
 terminal_min_width  = 50
 frame_rows          = 4
 pane_gap            = 3
 overlay_vertical_margin = 2
 content_min_width   = 20
+
+# The always-visible Hotkeys panel. Height includes its border; shorter terminal
+# windows automatically reduce it so the content pane keeps useful room.
+hotkey_panel_height = 11
 
 # The tool list on the left: a quarter of the terminal, clamped. On an 80-column
 # terminal that is 20; the clamp is what stops it vanishing on a narrow pane and
